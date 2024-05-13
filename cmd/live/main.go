@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/maxzhovtyj/live/internal/ui"
+	"github.com/maxzhovtyj/live/internal/app"
 	"log"
 )
 
 func main() {
 	log.Println("start ui")
-	ui.Run()
+	app.Run()
 }

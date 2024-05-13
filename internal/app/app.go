@@ -1,4 +1,4 @@
-package ui
+package app
 
 import (
 	"flag"
@@ -25,5 +25,5 @@ func Run() {
 		return e.Render(http.StatusOK, "index", nil)
 	})
 
-	e.Logger.Fatal(e.Start(":4040"))
+	e.Logger.Fatal(e.Start(":6789"))
 }
