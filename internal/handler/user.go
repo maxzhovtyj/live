@@ -28,7 +28,9 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 		Path:  "/",
 	})
 
-	return ctx.Redirect(http.StatusFound, "http://localhost:6789/")
+	ctx.Response().Header().Set("HX-Redirect", "http://localhost:6789/")
+
+	return nil
 }
 
 func (h *Handler) Index(ctx echo.Context) error {
