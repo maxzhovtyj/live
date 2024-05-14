@@ -16,6 +16,8 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 	email := ctx.FormValue("email")
 	password := ctx.FormValue("password")
 	log.Println(email, password)
+
+	//TODO
 	//token, err := h.s.UserService.GenerateTokens(email, password)
 	//if err != nil {
 	//	log.Println(err)
