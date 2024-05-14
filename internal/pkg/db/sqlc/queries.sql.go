@@ -38,6 +38,28 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const getAuthorizedUser = `-- name: GetAuthorizedUser :one
+SELECT id, first_name, last_name, email, password_hash FROM users WHERE email = $1 AND password_hash = $2 LIMIT 1
+`
+
+type GetAuthorizedUserParams struct {
+	Email        string
+	PasswordHash string
+}
+
+func (q *Queries) GetAuthorizedUser(ctx context.Context, arg GetAuthorizedUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, getAuthorizedUser, arg.Email, arg.PasswordHash)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.PasswordHash,
+	)
+	return i, err
+}
+
 const getUser = `-- name: GetUser :one
 SELECT id, first_name, last_name, email, password_hash FROM users WHERE id = $1 LIMIT 1
 `
