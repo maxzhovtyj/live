@@ -35,6 +35,36 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 	return nil
 }
 
+func (h *Handler) SignUpPage(ctx echo.Context) error {
+	return ctx.Render(http.StatusOK, "signUp", nil)
+}
+
+func (h *Handler) SignUp(ctx echo.Context) error {
+	firstName := ctx.FormValue("firstName")
+	lastName := ctx.FormValue("lastName")
+	email := ctx.FormValue("email")
+	password := ctx.FormValue("password")
+	repeatPassword := ctx.FormValue("repeat-password")
+	log.Println(firstName, lastName, email, password, repeatPassword)
+
+	//TODO
+	//token, err := h.s.UserService.GenerateTokens(email, password)
+	//if err != nil {
+	//	log.Println(err)
+	//	return err
+	//}
+
+	ctx.SetCookie(&http.Cookie{
+		Name:  accessTokenCookie,
+		Value: "123",
+		Path:  "/",
+	})
+
+	ctx.Response().Header().Set("HX-Redirect", "http://localhost:6789/")
+
+	return nil
+}
+
 func (h *Handler) Index(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index", nil)
 }

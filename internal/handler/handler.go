@@ -35,5 +35,8 @@ func (h *Handler) Init() *echo.Echo {
 	e.GET("/sign-in", h.SignInPage)
 	e.POST("/sign-in", h.SignIn)
 
+	e.GET("/sign-up", h.SignUpPage)
+	e.POST("/sign-up", h.SignUp)
+
 	return e
 }
