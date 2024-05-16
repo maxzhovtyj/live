@@ -2,8 +2,8 @@ package template
 
 import (
 	"github.com/labstack/echo/v4"
+	"html/template"
 	"io"
-	"text/template"
 )
 
 type Template struct {
@@ -14,17 +14,8 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.Templates.ExecuteTemplate(w, name, data)
 }
 
-func NewTemplateRenderer(e *echo.Echo, paths ...string) {
-	tmpl := &template.Template{}
-	for i := range paths {
-		template.Must(tmpl.ParseGlob(paths[i]))
-	}
-	t := newTemplate(tmpl)
-	e.Renderer = t
-}
-
-func newTemplate(templates *template.Template) echo.Renderer {
+func New() echo.Renderer {
 	return &Template{
-		Templates: templates,
+		Templates: template.Must(template.ParseGlob("internal/public/*.html")),
 	}
 }

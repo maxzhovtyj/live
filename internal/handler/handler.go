@@ -28,9 +28,13 @@ func (h *Handler) Init() *echo.Echo {
 		rate.Limit(20),
 	)))
 
-	template.NewTemplateRenderer(e, *publicFolder)
+	e.Renderer = template.New()
 
-	e.GET("/", h.Authorized(h.Index))
+	authorized := e.Group("/", h.Authorized)
+
+	authorized.GET("", h.Index)
+
+	//authorized.POST("/meeting/create")
 
 	e.GET("/sign-in", h.SignInPage)
 	e.POST("/sign-in", h.SignIn)

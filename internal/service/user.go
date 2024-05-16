@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
@@ -45,7 +46,10 @@ func (s *service) CreateUser(user models.User) error {
 func (s *service) GenerateTokens(email, password string) (string, error) {
 	selectedUser, err := s.repo.User.GetAuthorizedUser(email, s.generatePasswordHash(password))
 	if err != nil {
-		return "", fmt.Errorf("user are not found")
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", fmt.Errorf("користувача не знайдено")
+		}
+		return "", err
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
