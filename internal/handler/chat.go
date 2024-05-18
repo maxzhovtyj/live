@@ -11,17 +11,41 @@ import (
 	"github.com/maxzhovtyj/live/internal/pkg/templates/components"
 	"github.com/maxzhovtyj/live/internal/service"
 	"log"
+	"strconv"
 	"time"
 )
 
 func (h *Handler) Chat(ctx echo.Context) error {
-	return templates.Chat().Render(context.Background(), ctx.Response().Writer)
+	if ctx.QueryParam("id") == "" {
+		return templates.Chat(-1).Render(context.Background(), ctx.Response().Writer)
+	}
+
+	cid, err := strconv.Atoi(ctx.QueryParam("id"))
+	if err != nil {
+		return err
+	}
+
+	return templates.Chat(int32(cid)).Render(context.Background(), ctx.Response().Writer)
+}
+
+func (h *Handler) Conversations(ctx echo.Context) error {
+	user := h.getUserFromContext(ctx)
+
+	conversations, err := h.s.Chat.GetUserConversations(user.ID)
+	if err != nil {
+		return err
+	}
+
+	return components.Conversations(conversations).Render(context.Background(), ctx.Response().Writer)
 }
 
 var upgrader websocket.Upgrader
 
 func (h *Handler) JoinChat(ctx echo.Context) error {
-	cid := 1
+	cid, err := strconv.Atoi(ctx.QueryParam("id"))
+	if err != nil {
+		return err
+	}
 
 	conn, err := upgrader.Upgrade(ctx.Response().Writer, ctx.Request(), nil)
 	if err != nil {

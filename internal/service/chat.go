@@ -15,6 +15,10 @@ type ChatService struct {
 	repo *storage.Storage
 }
 
+func (c *ChatService) GetUserConversations(id int32) ([]db.GetUserConversationsRow, error) {
+	return c.repo.GetUserConversations(id)
+}
+
 func (c *ChatService) NewMessage(cid, uid int32, msg string) error {
 	return c.repo.Chat.InsertMessageIntoConversation(cid, uid, msg)
 }
@@ -108,7 +112,11 @@ func (cr *ChatRoom) Leave(id int32) {
 	cr.connectionsMX.Lock()
 	defer cr.connectionsMX.Unlock()
 
-	c := cr.connections[id]
+	c, ok := cr.connections[id]
+	if !ok {
+		return
+	}
+
 	close(c.Messages)
 
 	delete(cr.connections, id)

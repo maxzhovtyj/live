@@ -23,9 +23,10 @@ WHERE id = $1
 LIMIT 1;
 
 -- name: GetUserConversations :many
-SELECT *
-FROM conversation_participants
-WHERE user_id = $1;
+SELECT c.name, cp.conversation_id, cp.user_id
+FROM conversation_participants cp
+         LEFT JOIN conversations c on cp.conversation_id = c.id
+WHERE cp.user_id = $1;
 
 -- name: GetConversationMessages :many
 SELECT m.id,

@@ -23,6 +23,7 @@ type Chat interface {
 	Join(cid int, cn *websocket.Conn, user db.User) (*Connection, *ChatRoom)
 	GetRoom(cid int32) *ChatRoom
 	GetRoomMessages(cid int) ([]db.GetConversationMessagesRow, error)
+	GetUserConversations(id int32) ([]db.GetUserConversationsRow, error)
 }
 
 func New(repo *storage.Storage) *Service {

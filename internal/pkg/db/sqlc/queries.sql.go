@@ -157,21 +157,28 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 }
 
 const getUserConversations = `-- name: GetUserConversations :many
-SELECT conversation_id, user_id
-FROM conversation_participants
-WHERE user_id = $1
+SELECT c.name, cp.conversation_id, cp.user_id
+FROM conversation_participants cp
+         LEFT JOIN conversations c on cp.conversation_id = c.id
+WHERE cp.user_id = $1
 `
 
-func (q *Queries) GetUserConversations(ctx context.Context, userID int32) ([]ConversationParticipant, error) {
+type GetUserConversationsRow struct {
+	Name           sql.NullString
+	ConversationID int32
+	UserID         int32
+}
+
+func (q *Queries) GetUserConversations(ctx context.Context, userID int32) ([]GetUserConversationsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getUserConversations, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ConversationParticipant
+	var items []GetUserConversationsRow
 	for rows.Next() {
-		var i ConversationParticipant
-		if err := rows.Scan(&i.ConversationID, &i.UserID); err != nil {
+		var i GetUserConversationsRow
+		if err := rows.Scan(&i.Name, &i.ConversationID, &i.UserID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

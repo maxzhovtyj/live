@@ -41,7 +41,7 @@ func (c *ChatStorage) GetConversationMessages(id int32) ([]db.GetConversationMes
 	return c.q.GetConversationMessages(ctx, id)
 }
 
-func (c *ChatStorage) GetUserConversations(id int32) ([]db.ConversationParticipant, error) {
+func (c *ChatStorage) GetUserConversations(id int32) ([]db.GetUserConversationsRow, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancelFunc()
 
