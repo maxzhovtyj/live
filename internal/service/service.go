@@ -19,8 +19,9 @@ type User interface {
 }
 
 type Chat interface {
+	NewMessage(cid, uid int32, msg string) error
 	Join(cid int, cn *websocket.Conn, user db.User) (*Connection, *ChatRoom)
-	GetRoom(cid int) *ChatRoom
+	GetRoom(cid int32) *ChatRoom
 	GetRoomMessages(cid int) ([]db.GetConversationMessagesRow, error)
 }
 

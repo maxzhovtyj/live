@@ -86,6 +86,12 @@ func (h *Handler) wsReader(cl chan struct{}, chatConn *service.Connection, room 
 			continue
 		}
 
+		err = h.s.Chat.NewMessage(room.ConversationID, chatConn.User.ID, cm.ChatMessage)
+		if err != nil {
+			log.Println("failed to save message in db:", err)
+			continue
+		}
+
 		err = room.Publish(service.Message{
 			FirstName: chatConn.User.FirstName,
 			LastName:  chatConn.User.LastName,

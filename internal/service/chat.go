@@ -15,6 +15,10 @@ type ChatService struct {
 	repo *storage.Storage
 }
 
+func (c *ChatService) NewMessage(cid, uid int32, msg string) error {
+	return c.repo.Chat.InsertMessageIntoConversation(cid, uid, msg)
+}
+
 type Message struct {
 	FirstName string
 	LastName  string
@@ -23,6 +27,8 @@ type Message struct {
 }
 
 type ChatRoom struct {
+	ConversationID int32
+
 	connections   map[int32]*Connection
 	connectionsMX sync.RWMutex
 
@@ -54,14 +60,14 @@ type Connection struct {
 }
 
 func (c *ChatService) Join(cid int, cn *websocket.Conn, user db.User) (*Connection, *ChatRoom) {
-	room := c.GetRoom(cid)
+	room := c.GetRoom(int32(cid))
 
 	return room.Join(user.ID, cn, user), room
 }
 
-func (c *ChatService) GetRoom(cid int) *ChatRoom {
+func (c *ChatService) GetRoom(cid int32) *ChatRoom {
 	c.chatRoomsMX.RLock()
-	cr, ok := c.chatRooms[int32(cid)]
+	cr, ok := c.chatRooms[cid]
 	c.chatRoomsMX.RUnlock()
 
 	if ok && cr != nil {
@@ -71,15 +77,16 @@ func (c *ChatService) GetRoom(cid int) *ChatRoom {
 	c.chatRoomsMX.Lock()
 	defer c.chatRoomsMX.Unlock()
 
-	cr, ok = c.chatRooms[int32(cid)]
+	cr, ok = c.chatRooms[cid]
 	if ok && cr != nil {
 		return cr
 	}
 
 	cr = &ChatRoom{
-		connections: map[int32]*Connection{},
+		ConversationID: cid,
+		connections:    map[int32]*Connection{},
 	}
-	c.chatRooms[int32(cid)] = cr
+	c.chatRooms[cid] = cr
 
 	return cr
 }
