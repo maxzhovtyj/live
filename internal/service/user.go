@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/maxzhovtyj/live/internal/models"
+	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
 	"github.com/maxzhovtyj/live/internal/storage"
 	"time"
 )
@@ -16,34 +17,28 @@ const (
 	salt       = "12czc,xlc,ll122##@1"
 )
 
-type UserService interface {
-	CreateUser(user models.User) error
-	GenerateTokens(email string, password string) (string, error)
-	ParseToken(token string) (int32, error)
-}
-
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserID int32
+	User db.User
 }
 
-type service struct {
+type UserService struct {
 	repo *storage.Storage
 }
 
-func NewUserService(repo *storage.Storage) UserService {
-	return &service{
+func NewUserService(repo *storage.Storage) *UserService {
+	return &UserService{
 		repo: repo,
 	}
 }
 
-func (s *service) CreateUser(user models.User) error {
+func (s *UserService) CreateUser(user models.User) error {
 	user.Password = s.generatePasswordHash(user.Password)
 
 	return s.repo.User.Create(user)
 }
 
-func (s *service) GenerateTokens(email, password string) (string, error) {
+func (s *UserService) GenerateTokens(email, password string) (string, error) {
 	selectedUser, err := s.repo.User.GetAuthorizedUser(email, s.generatePasswordHash(password))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -57,7 +52,7 @@ func (s *service) GenerateTokens(email, password string) (string, error) {
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		selectedUser.ID,
+		selectedUser,
 	})
 
 	accessToken, err := token.SignedString([]byte(signingKey))
@@ -68,7 +63,7 @@ func (s *service) GenerateTokens(email, password string) (string, error) {
 	return accessToken, nil
 }
 
-func (s *service) ParseToken(accessToken string) (int32, error) {
+func (s *UserService) ParseToken(accessToken string) (db.User, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -77,18 +72,18 @@ func (s *service) ParseToken(accessToken string) (int32, error) {
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return 0, err
+		return db.User{}, err
 	}
 
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *tokenClaims")
+		return db.User{}, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	return claims.UserID, nil
+	return claims.User, nil
 }
 
-func (s *service) generatePasswordHash(password string) string {
+func (s *UserService) generatePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 

@@ -7,10 +7,13 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (first_name, last_name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, password_hash
+INSERT INTO users (first_name, last_name, email, password_hash)
+VALUES ($1, $2, $3, $4)
+RETURNING id, first_name, last_name, email, password_hash
 `
 
 type CreateUserParams struct {
@@ -39,7 +42,11 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getAuthorizedUser = `-- name: GetAuthorizedUser :one
-SELECT id, first_name, last_name, email, password_hash FROM users WHERE email = $1 AND password_hash = $2 LIMIT 1
+SELECT id, first_name, last_name, email, password_hash
+FROM users
+WHERE email = $1
+  AND password_hash = $2
+LIMIT 1
 `
 
 type GetAuthorizedUserParams struct {
@@ -60,8 +67,79 @@ func (q *Queries) GetAuthorizedUser(ctx context.Context, arg GetAuthorizedUserPa
 	return i, err
 }
 
+const getConversation = `-- name: GetConversation :one
+SELECT id, name, created_at
+FROM conversations
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetConversation(ctx context.Context, id int32) (Conversation, error) {
+	row := q.db.QueryRowContext(ctx, getConversation, id)
+	var i Conversation
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
+	return i, err
+}
+
+const getConversationMessages = `-- name: GetConversationMessages :many
+SELECT m.id,
+       m.conversation_id,
+       m.sender_id,
+       m.body,
+       m.created_at,
+       u.id,
+       concat(u.first_name, ' ', u.last_name)
+FROM messages m
+         LEFT JOIN users u ON m.sender_id = u.id
+WHERE conversation_id = $1
+`
+
+type GetConversationMessagesRow struct {
+	ID             int32
+	ConversationID int32
+	SenderID       int32
+	Body           string
+	CreatedAt      sql.NullTime
+	ID_2           sql.NullInt32
+	Concat         interface{}
+}
+
+func (q *Queries) GetConversationMessages(ctx context.Context, conversationID int32) ([]GetConversationMessagesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getConversationMessages, conversationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetConversationMessagesRow
+	for rows.Next() {
+		var i GetConversationMessagesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ConversationID,
+			&i.SenderID,
+			&i.Body,
+			&i.CreatedAt,
+			&i.ID_2,
+			&i.Concat,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
-SELECT id, first_name, last_name, email, password_hash FROM users WHERE id = $1 LIMIT 1
+SELECT id, first_name, last_name, email, password_hash
+FROM users
+WHERE id = $1
+LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
@@ -75,4 +153,49 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 		&i.PasswordHash,
 	)
 	return i, err
+}
+
+const getUserConversations = `-- name: GetUserConversations :many
+SELECT conversation_id, user_id
+FROM conversation_participants
+WHERE user_id = $1
+`
+
+func (q *Queries) GetUserConversations(ctx context.Context, userID int32) ([]ConversationParticipant, error) {
+	rows, err := q.db.QueryContext(ctx, getUserConversations, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ConversationParticipant
+	for rows.Next() {
+		var i ConversationParticipant
+		if err := rows.Scan(&i.ConversationID, &i.UserID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const insertMessageIntoConversation = `-- name: InsertMessageIntoConversation :exec
+INSERT INTO messages (conversation_id, sender_id, body)
+VALUES ($1, $2, $3)
+`
+
+type InsertMessageIntoConversationParams struct {
+	ConversationID int32
+	SenderID       int32
+	Body           string
+}
+
+func (q *Queries) InsertMessageIntoConversation(ctx context.Context, arg InsertMessageIntoConversationParams) error {
+	_, err := q.db.ExecContext(ctx, insertMessageIntoConversation, arg.ConversationID, arg.SenderID, arg.Body)
+	return err
 }

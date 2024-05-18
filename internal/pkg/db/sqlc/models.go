@@ -4,7 +4,28 @@
 
 package db
 
-import ()
+import (
+	"database/sql"
+)
+
+type Conversation struct {
+	ID        int32
+	Name      string
+	CreatedAt sql.NullTime
+}
+
+type ConversationParticipant struct {
+	ConversationID int32
+	UserID         int32
+}
+
+type Message struct {
+	ID             int32
+	ConversationID int32
+	SenderID       int32
+	Body           string
+	CreatedAt      sql.NullTime
+}
 
 type User struct {
 	ID           int32

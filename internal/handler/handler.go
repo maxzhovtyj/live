@@ -30,6 +30,9 @@ func (h *Handler) Init() *echo.Echo {
 	authorized := e.Group("/", h.Authorized)
 
 	authorized.GET("", h.Index)
+	authorized.GET("chat", h.Chat)
+
+	authorized.GET("ws/chat", h.JoinChat)
 
 	e.GET("/sign-in", h.SignInPage)
 	e.POST("/sign-in", h.SignIn)

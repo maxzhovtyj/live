@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/maxzhovtyj/live/internal/models"
+	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
 	"github.com/maxzhovtyj/live/internal/pkg/templates"
 	"log"
 	"net/http"
@@ -20,7 +21,7 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 	email := ctx.FormValue("email")
 	password := ctx.FormValue("password")
 
-	token, err := h.s.UserService.GenerateTokens(email, password)
+	token, err := h.s.User.GenerateTokens(email, password)
 	if err != nil {
 		err = ctx.String(http.StatusBadRequest, err.Error())
 		if err != nil {
@@ -73,7 +74,7 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 		}
 	}
 
-	err := h.s.UserService.CreateUser(models.User{
+	err := h.s.User.CreateUser(models.User{
 		Email:     email,
 		FirstName: firstName,
 		LastName:  lastName,
@@ -83,7 +84,7 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 		return err
 	}
 
-	token, err := h.s.UserService.GenerateTokens(email, password)
+	token, err := h.s.User.GenerateTokens(email, password)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -106,7 +107,7 @@ func (h *Handler) Index(ctx echo.Context) error {
 
 func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		_, err := c.Cookie(accessTokenCookie)
+		t, err := c.Cookie(accessTokenCookie)
 		if err != nil {
 			err = c.Redirect(http.StatusFound, "/sign-in")
 			if err != nil {
@@ -116,6 +117,17 @@ func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
 			return err
 		}
 
+		u, err := h.s.ParseToken(t.Value)
+		if err != nil {
+			return err
+		}
+
+		c.Set("currentUser", u)
+
 		return next(c)
 	}
+}
+
+func (h *Handler) getUserFromContext(ctx echo.Context) db.User {
+	return ctx.Get("currentUser").(db.User)
 }
