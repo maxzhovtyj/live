@@ -4,7 +4,6 @@ import (
 	"flag"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/maxzhovtyj/live/internal/pkg/template"
 	"github.com/maxzhovtyj/live/internal/service"
 	"golang.org/x/time/rate"
 )
@@ -28,16 +27,13 @@ func (h *Handler) Init() *echo.Echo {
 		rate.Limit(20),
 	)))
 
-	e.Renderer = template.New()
-
 	authorized := e.Group("/", h.Authorized)
 
 	authorized.GET("", h.Index)
 
-	//authorized.POST("/meeting/create")
-
 	e.GET("/sign-in", h.SignInPage)
 	e.POST("/sign-in", h.SignIn)
+	e.POST("/sign-out", h.SignOut)
 
 	e.GET("/sign-up", h.SignUpPage)
 	e.POST("/sign-up", h.SignUp)

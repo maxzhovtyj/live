@@ -1,16 +1,19 @@
 package handler
 
 import (
+	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/maxzhovtyj/live/internal/models"
+	"github.com/maxzhovtyj/live/internal/pkg/templates"
 	"log"
 	"net/http"
+	"time"
 )
 
 const accessTokenCookie = "Access-Token"
 
 func (h *Handler) SignInPage(ctx echo.Context) error {
-	return ctx.Render(http.StatusOK, "signIn", nil)
+	return templates.SignIn().Render(context.Background(), ctx.Response().Writer)
 }
 
 func (h *Handler) SignIn(ctx echo.Context) error {
@@ -38,8 +41,21 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 	return nil
 }
 
+func (h *Handler) SignOut(ctx echo.Context) error {
+	ctx.SetCookie(&http.Cookie{
+		Name:    accessTokenCookie,
+		Path:    "/",
+		Expires: time.Now(),
+		MaxAge:  -1,
+	})
+
+	ctx.Response().Header().Set("HX-Redirect", "/sign-in")
+
+	return nil
+}
+
 func (h *Handler) SignUpPage(ctx echo.Context) error {
-	return ctx.Render(http.StatusOK, "signUp", nil)
+	return templates.SignUp().Render(context.Background(), ctx.Response().Writer)
 }
 
 func (h *Handler) SignUp(ctx echo.Context) error {
@@ -85,7 +101,7 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 }
 
 func (h *Handler) Index(ctx echo.Context) error {
-	return ctx.Render(http.StatusOK, "index", nil)
+	return templates.Index().Render(context.Background(), ctx.Response().Writer)
 }
 
 func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
