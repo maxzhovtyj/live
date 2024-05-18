@@ -1,10 +1,14 @@
 package templates
 
-import "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+import (
+    "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+    "github.com/maxzhovtyj/live/internal/pkg/templates/components"
+)
 
 templ Chat() {
 @layout.Main() {
-<div class="flex flex-col flex-auto h-full p-6">
+<div class="mx-auto flex max-w-7xl justify-between p-6 lg:px-8">
+    @components.Conversations()
     <div class="justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
         <div id="chat-messages" class="overflow-y-scroll"></div>
         <form hx-on:submit="this.reset()" hx-ext="ws" ws-connect="/ws/chat" ws-send id="form"

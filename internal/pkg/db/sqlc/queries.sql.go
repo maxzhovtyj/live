@@ -92,6 +92,7 @@ SELECT m.id,
 FROM messages m
          LEFT JOIN users u ON m.sender_id = u.id
 WHERE conversation_id = $1
+ORDER BY m.created_at
 `
 
 type GetConversationMessagesRow struct {

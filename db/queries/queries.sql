@@ -37,7 +37,8 @@ SELECT m.id,
        concat(u.first_name, ' ', u.last_name)
 FROM messages m
          LEFT JOIN users u ON m.sender_id = u.id
-WHERE conversation_id = $1;
+WHERE conversation_id = $1
+ORDER BY m.created_at;
 
 -- name: InsertMessageIntoConversation :exec
 INSERT INTO messages (conversation_id, sender_id, body)

@@ -31,7 +31,7 @@ func Index() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"bg-gray-50 dark:bg-gray-900\"><div class=\"flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0\"><div class=\"w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700\"><div class=\"p-6 space-y-4 md:space-y-6 sm:p-8\"><h1>Hello</h1><a href=\"/chat\" class=\"text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800\">Chat</a></div></div></div></section>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"bg-gray-50 dark:bg-gray-900\"><div class=\"flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0\"><div class=\"w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700\"><div class=\"p-6 space-y-4 md:space-y-6 sm:p-8\"><h1>Hello</h1></div></div></div></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

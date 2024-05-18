@@ -23,7 +23,7 @@ func Message(senderName, time, msg string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex items-start gap-2.5\" hx-swap-oob=\"beforeend:#chat-messages\"><div class=\"flex flex-col w-full max-w-[320px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700\"><div class=\"flex items-center space-x-2 rtl:space-x-reverse\"><span class=\"text-sm font-semibold text-gray-900 dark:text-white\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex items-start gap-2.5\" hx-swap-oob=\"beforeend:#chat-messages\"><div class=\"mb-4 flex flex-col w-full max-w-[320px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700\"><div class=\"flex items-center space-x-2 rtl:space-x-reverse\"><span class=\"text-sm font-semibold text-gray-900 dark:text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
