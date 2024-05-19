@@ -9,6 +9,7 @@ templ Chat(chatID int32) {
 @layout.Main() {
 <div class="mx-auto flex max-w-7xl justify-between p-6 lg:px-8">
     <div class="flex flex-col align-items-center">
+        <div hx-trigger="load" hx-get="/conversations"></div>
         <button hx-get="/modal"
                 hx-target="#modals-here"
                 hx-trigger="click"
@@ -26,7 +27,6 @@ templ Chat(chatID int32) {
                 <div class="modal-content"></div>
             </div>
         </div>
-        <div hx-trigger="load" hx-get="/conversations"></div>
     </div>
     <div class="justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
         <div id="chat-messages" class="overflow-y-auto h-96"></div>
