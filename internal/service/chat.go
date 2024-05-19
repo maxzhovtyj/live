@@ -15,6 +15,15 @@ type ChatService struct {
 	repo *storage.Storage
 }
 
+func (c *ChatService) NewChat(name string, ids ...int32) error {
+	id, err := c.repo.Chat.CreateConversation(name)
+	if err != nil {
+		return err
+	}
+
+	return c.repo.Chat.AddUsersToConversation(id, ids...)
+}
+
 func (c *ChatService) GetUserConversations(id int32) ([]db.GetUserConversationsRow, error) {
 	return c.repo.GetUserConversations(id)
 }

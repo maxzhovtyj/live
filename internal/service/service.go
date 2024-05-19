@@ -13,12 +13,14 @@ type Service struct {
 }
 
 type User interface {
+	GetAll() ([]db.User, error)
 	CreateUser(user models.User) error
 	GenerateTokens(email string, password string) (string, error)
 	ParseToken(accessToken string) (db.User, error)
 }
 
 type Chat interface {
+	NewChat(name string, ids ...int32) error
 	NewMessage(cid, uid int32, msg string) error
 	Join(cid int, cn *websocket.Conn, user db.User) (*Connection, *ChatRoom)
 	GetRoom(cid int32) *ChatRoom

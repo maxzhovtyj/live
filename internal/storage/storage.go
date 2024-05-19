@@ -14,10 +14,13 @@ type Storage struct {
 type User interface {
 	Create(user models.User) error
 	Get(id int32) (db.User, error)
+	GetAll() ([]db.User, error)
 	GetAuthorizedUser(email, passwordHash string) (db.User, error)
 }
 
 type Chat interface {
+	CreateConversation(name string) (int32, error)
+	AddUsersToConversation(cid int32, ids ...int32) error
 	InsertMessageIntoConversation(cid, sender int32, msg string) error
 	GetConversation(id int32) (db.Conversation, error)
 	GetConversationMessages(id int32) ([]db.GetConversationMessagesRow, error)

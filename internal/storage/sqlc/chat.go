@@ -10,6 +10,24 @@ type ChatStorage struct {
 	q *db.Queries
 }
 
+func (c *ChatStorage) AddUsersToConversation(cid int32, ids ...int32) error {
+	for _, i := range ids {
+		err := c.q.AddConversationParticipant(context.Background(), db.AddConversationParticipantParams{
+			ConversationID: cid,
+			UserID:         i,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *ChatStorage) CreateConversation(name string) (int32, error) {
+	return c.q.InsertConversation(context.Background(), name)
+}
+
 func NewChatStorage(conn db.DBTX) *ChatStorage {
 	return &ChatStorage{
 		q: db.New(conn),

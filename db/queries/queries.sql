@@ -9,6 +9,10 @@ FROM users
 WHERE id = $1
 LIMIT 1;
 
+-- name: GetAll :many
+SELECT *
+FROM users;
+
 -- name: GetAuthorizedUser :one
 SELECT *
 FROM users
@@ -44,4 +48,20 @@ ORDER BY m.created_at;
 -- name: InsertMessageIntoConversation :exec
 INSERT INTO messages (conversation_id, sender_id, body)
 VALUES ($1, $2, $3);
+
+-- name: InsertConversation :one
+INSERT INTO conversations (name)
+VALUES ($1)
+RETURNING id;
+
+-- name: AddConversationParticipant :exec
+INSERT INTO conversation_participants (conversation_id, user_id)
+VALUES ($1, $2);
+
+-- name: GetConversationParticipants :many
+SELECT u.id, u.first_name, u.last_name
+FROM conversation_participants cp
+LEFT JOIN users u ON cp.user_id = u.id
+WHERE cp.conversation_id = $1;
+
 

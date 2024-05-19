@@ -1,0 +1,45 @@
+package components
+
+import (
+db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
+"strconv"
+)
+
+templ NewConversation(users []db.User) {
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header flex justify-center">
+            <h5 class="modal-title">New Chat</h5>
+        </div>
+        <form hx-post="/new-chat" class="max-w-sm mx-auto p-4">
+            <div class="my-4">
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chat Name</label>
+                <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Назва чату" required=""/>
+            </div>
+
+            <div class="my-4">
+                <label for="user">Оберіть користувача</label>
+                <select name="user" id="user" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+                    <option selected="">Open this select menu</option>
+                    for _, u := range users {
+                    <option value={ strconv.Itoa(int(u.ID)) }>{ u.FirstName } { u.LastName }</option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+}
+
+templ User() {
+<select name="question_list" data-minimum-input-length="0" data-allow-clear="true" data-placeholder=""
+        data-maximum-selection-length="3" class="form-control django-select2 select2-hidden-accessible" title=""
+        id="id_question_list" multiple="" tabindex="-1" aria-hidden="true">
+    <option value="1">Question 1?</option>
+</select>
+}

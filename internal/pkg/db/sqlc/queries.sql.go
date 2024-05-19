@@ -10,6 +10,21 @@ import (
 	"database/sql"
 )
 
+const addConversationParticipant = `-- name: AddConversationParticipant :exec
+INSERT INTO conversation_participants (conversation_id, user_id)
+VALUES ($1, $2)
+`
+
+type AddConversationParticipantParams struct {
+	ConversationID int32
+	UserID         int32
+}
+
+func (q *Queries) AddConversationParticipant(ctx context.Context, arg AddConversationParticipantParams) error {
+	_, err := q.db.ExecContext(ctx, addConversationParticipant, arg.ConversationID, arg.UserID)
+	return err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (first_name, last_name, email, password_hash)
 VALUES ($1, $2, $3, $4)
@@ -39,6 +54,40 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.PasswordHash,
 	)
 	return i, err
+}
+
+const getAll = `-- name: GetAll :many
+SELECT id, first_name, last_name, email, password_hash
+FROM users
+`
+
+func (q *Queries) GetAll(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.FirstName,
+			&i.LastName,
+			&i.Email,
+			&i.PasswordHash,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getAuthorizedUser = `-- name: GetAuthorizedUser :one
@@ -136,6 +185,42 @@ func (q *Queries) GetConversationMessages(ctx context.Context, conversationID in
 	return items, nil
 }
 
+const getConversationParticipants = `-- name: GetConversationParticipants :many
+SELECT u.id, u.first_name, u.last_name
+FROM conversation_participants cp
+LEFT JOIN users u ON cp.user_id = u.id
+WHERE cp.conversation_id = $1
+`
+
+type GetConversationParticipantsRow struct {
+	ID        sql.NullInt32
+	FirstName sql.NullString
+	LastName  sql.NullString
+}
+
+func (q *Queries) GetConversationParticipants(ctx context.Context, conversationID int32) ([]GetConversationParticipantsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getConversationParticipants, conversationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetConversationParticipantsRow
+	for rows.Next() {
+		var i GetConversationParticipantsRow
+		if err := rows.Scan(&i.ID, &i.FirstName, &i.LastName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
 SELECT id, first_name, last_name, email, password_hash
 FROM users
@@ -190,6 +275,19 @@ func (q *Queries) GetUserConversations(ctx context.Context, userID int32) ([]Get
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertConversation = `-- name: InsertConversation :one
+INSERT INTO conversations (name)
+VALUES ($1)
+RETURNING id
+`
+
+func (q *Queries) InsertConversation(ctx context.Context, name string) (int32, error) {
+	row := q.db.QueryRowContext(ctx, insertConversation, name)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const insertMessageIntoConversation = `-- name: InsertMessageIntoConversation :exec

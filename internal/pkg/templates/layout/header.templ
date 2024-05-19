@@ -12,7 +12,12 @@ templ Header() {
             <a href="/meetings" class="px-8 text-sm font-semibold leading-6 text-gray-900">Meetings</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a hx-post="/sign-out" type="button" class="-mx-3 cursor-pointer block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log out</a>
+            <a hx-post="/sign-out" type="button" class="flex items-center -mx-3 cursor-pointer block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                Log out
+                <svg class="ml-2 w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"></path>
+                </svg>
+            </a>
         </div>
     </nav>
 

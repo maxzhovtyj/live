@@ -34,7 +34,7 @@ func Chat(chatID int32) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex max-w-7xl justify-between p-6 lg:px-8\"><div hx-trigger=\"load\" hx-get=\"/conversations\"></div><div class=\"justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4\"><div id=\"chat-messages\" class=\"overflow-y-scroll\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex max-w-7xl justify-between p-6 lg:px-8\"><div class=\"flex flex-col align-items-center\"><button hx-get=\"/modal\" hx-target=\"#modals-here\" hx-trigger=\"click\" data-bs-toggle=\"modal\" data-bs-target=\"#modals-here\" class=\"btn btn-primary mt-8\">New Chat</button><div id=\"modals-here\" class=\"modal modal-blur fade\" style=\"display: none\" aria-hidden=\"false\" tabindex=\"-1\"><div class=\"modal-dialog modal-lg modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"></div></div></div><div hx-trigger=\"load\" hx-get=\"/conversations\"></div></div><div class=\"justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4\"><div id=\"chat-messages\" class=\"overflow-y-auto h-96\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func Chat(chatID int32) templ.Component {
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(
 					"/ws/chat?id=%d", chatID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/chat.templ`, Line: 18, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/chat.templ`, Line: 37, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {

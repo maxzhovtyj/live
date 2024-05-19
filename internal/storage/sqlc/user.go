@@ -11,6 +11,10 @@ type UserStorage struct {
 	q *db.Queries
 }
 
+func (u *UserStorage) GetAll() ([]db.User, error) {
+	return u.q.GetAll(context.Background())
+}
+
 func (u *UserStorage) GetAuthorizedUser(email, passwordHash string) (db.User, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancelFunc()

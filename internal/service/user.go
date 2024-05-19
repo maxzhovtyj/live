@@ -32,6 +32,10 @@ func NewUserService(repo *storage.Storage) *UserService {
 	}
 }
 
+func (s *UserService) GetAll() ([]db.User, error) {
+	return s.repo.GetAll()
+}
+
 func (s *UserService) CreateUser(user models.User) error {
 	user.Password = s.generatePasswordHash(user.Password)
 
