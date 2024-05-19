@@ -1,4 +1,4 @@
-package video
+package service
 
 import (
 	"math/rand"
@@ -16,26 +16,27 @@ type Participant struct {
 	Mutex sync.Mutex
 }
 
-type Room struct {
-	participants map[string][]*Participant
+type VideoRoom struct {
+	Participants map[string][]*Participant
 	mx           sync.RWMutex
 }
 
-// Init initialize room map
-func (r *Room) Init() {
-	r.participants = make(map[string][]*Participant)
+func NewVideoRoom() *VideoRoom {
+	return &VideoRoom{
+		Participants: make(map[string][]*Participant),
+	}
 }
 
 // Get all participant in a room
-func (r *Room) Get(roomID string) []*Participant {
+func (r *VideoRoom) Get(roomID string) []*Participant {
 	r.mx.RLock()
 	defer r.mx.RUnlock()
 
-	return r.participants[roomID]
+	return r.Participants[roomID]
 }
 
 // CreateRoom creates a room
-func (r *Room) CreateRoom() string {
+func (r *VideoRoom) CreateRoom() string {
 	r.mx.Lock()
 	defer r.mx.Unlock()
 
@@ -48,26 +49,26 @@ func (r *Room) CreateRoom() string {
 	}
 
 	roomID := string(b)
-	r.participants[roomID] = []*Participant{}
+	r.Participants[roomID] = []*Participant{}
 
 	return roomID
 }
 
 // InsertIntoRoom join a room handler
-func (r *Room) InsertIntoRoom(roomID string, host bool, conn *websocket.Conn) {
+func (r *VideoRoom) InsertIntoRoom(roomID string, host bool, conn *websocket.Conn) {
 	r.mx.Lock()
 	defer r.mx.Unlock()
 
 	clientID := uuid.New().String()
 	incomingParticipant := &Participant{host, clientID, conn, sync.Mutex{}}
 
-	r.participants[roomID] = append(r.participants[roomID], incomingParticipant)
+	r.Participants[roomID] = append(r.Participants[roomID], incomingParticipant)
 }
 
 // DeleteRoom delete a room
-func (r *Room) DeleteRoom(roomID string) {
+func (r *VideoRoom) DeleteRoom(roomID string) {
 	r.mx.Lock()
 	defer r.mx.Unlock()
 
-	delete(r.participants, roomID)
+	delete(r.Participants, roomID)
 }

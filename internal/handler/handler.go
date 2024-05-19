@@ -31,6 +31,8 @@ func (h *Handler) Init() *echo.Echo {
 		rate.Limit(20),
 	)))
 
+	e.Static("/static/", "/Users/maksymzhovtaniuk/Desktop/univer4.2/диплом/live/static")
+
 	authorized := e.Group("/", h.Authorized)
 
 	authorized.GET("", h.Index)
@@ -41,6 +43,10 @@ func (h *Handler) Init() *echo.Echo {
 
 	authorized.GET("modal", h.newChatModal)
 	authorized.POST("new-chat", h.newChat)
+
+	authorized.GET("video", h.VideoRoom)
+	authorized.GET("create-room", h.CreateRoomRequestHandler)
+	authorized.GET("join-room", h.JoinRoomRequestHandler)
 
 	e.GET("/sign-in", h.SignInPage)
 	e.POST("/sign-in", h.SignIn)
