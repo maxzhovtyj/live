@@ -15,6 +15,10 @@ import (
 	"time"
 )
 
+func (h *Handler) Index(ctx echo.Context) error {
+	return templates.Chat(-1).Render(context.Background(), ctx.Response().Writer)
+}
+
 func (h *Handler) Chat(ctx echo.Context) error {
 	if ctx.QueryParam("id") == "" {
 		return templates.Chat(-1).Render(context.Background(), ctx.Response().Writer)

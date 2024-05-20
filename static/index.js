@@ -72,7 +72,7 @@ async function InitiateMeeting(e) {
     }
 
     let socket = new WebSocket(
-        `ws://${document.location.host}/join-room?roomID=${room_id}`
+        `wss://${document.location.host}/ws/join-room?roomID=${room_id}`
     );
 
     webSocket = socket;
@@ -227,7 +227,7 @@ ConnectToWebSocket = () => {
         return false;
     }
 
-    connection = new WebSocket(`ws://${document.location.host}/ws`);
+    connection = new WebSocket(`wss://${document.location.host}/ws`);
 
     connection.onmessage = function (evt) {
         const eventData = JSON.parse(evt.data);

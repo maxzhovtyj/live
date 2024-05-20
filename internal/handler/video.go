@@ -73,9 +73,9 @@ func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
 	}
 
 	ws, err := videoUpgrader.Upgrade(ctx.Response().Writer, ctx.Request(), nil)
-
 	if err != nil {
 		log.Println("Unable to upgrade http to websocket", err)
+		return err
 	}
 
 	AllRooms.InsertIntoRoom(roomID, false, ws)

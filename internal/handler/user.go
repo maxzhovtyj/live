@@ -101,10 +101,6 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 	return nil
 }
 
-func (h *Handler) Index(ctx echo.Context) error {
-	return templates.Index().Render(context.Background(), ctx.Response().Writer)
-}
-
 func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		t, err := c.Cookie(accessTokenCookie)

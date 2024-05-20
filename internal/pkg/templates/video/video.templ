@@ -1,6 +1,9 @@
 package video
 
+import "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+
 templ VideoRoom() {
+@layout.Main() {
 <div class="pt-10 bg-[#1c1f2e] rounded-xl">
     <div class="pl-10">
         <h1 class="text-4xl mb-2 text-white font-bold">Streamify</h1>
@@ -21,7 +24,7 @@ templ VideoRoom() {
 
     <div class="flex ">
         <div class="flex-auto w-96 border-t-2 border-r-2 border-gray-800">
-            <div class="flex gap-1">
+            <div class="flex gap-1 flex-col">
                 <video class="w-4/6" autoplay controls="true" id="localClientVideo"></video>
                 <video class="w-2/6" autoplay controls="true" id="remoteClientVideo"></video>
             </div>
@@ -50,5 +53,6 @@ templ VideoRoom() {
         </div>
     </div>
 </div>
-<script src="http://localhost:6789/static/index.js"></script>
+<script src="https://194.164.59.123/static/index.js"></script>
+}
 }
