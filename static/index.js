@@ -6,13 +6,6 @@ let remoteClientVideo;
 let peerRef;
 
 window.onload = () => {
-    InitApp();
-    document.getElementById('chat_message_input').onsubmit = SendMessage;
-
-    // ------ WEBRTC ------------- //
-    document.getElementById('createMeeting').onclick = InitiateMeeting;
-    document.getElementById('joinMeeting').onclick = InitiateMeeting;
-
     console.log('about requesting cams');
     openCamera().then((stream) => {
         localClientVideo = document.getElementById('localClientVideo');
@@ -20,12 +13,10 @@ window.onload = () => {
         localClientStream = stream;
 
         remoteClientVideo = document.getElementById('remoteClientVideo');
+    }).then(() => {
+        InitiateMeeting().then(r => console.log(r));
     });
-
-    // -------------------------- //
 };
-
-// ----- WEBRTC -----///
 
 const openCamera = async () => {
     if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
@@ -34,9 +25,20 @@ const openCamera = async () => {
         const cameras = allDevices.filter((device) => device.kind === 'videoinput');
 
         const constraints = {
-            audio: true,
+            audio: {
+                advanced: [{
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    sampleRate: 48000,
+                    suppressLocalAudioPlayback: true,
+                },
+                ]
+            },
             video: {
                 deviceId: cameras[0].deviceId,
+                advanced: [{
+                   facingMode: "right",
+                }],
             },
         };
 
@@ -48,31 +50,19 @@ const openCamera = async () => {
     }
 };
 
-async function InitiateMeeting(e) {
-    // create a meeting
-
-    // join a meeting
-
-    e.preventDefault();
-    var meetingCodeBox = document.getElementById('meeting_code_box');
-
-    room_id = meetingCodeBox.value;
+async function InitiateMeeting() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const room_id = urlParams.get('id');
 
     if (room_id) {
         console.log('joining a meeting');
-        room_id = meetingCodeBox.value;
     } else {
-        console.log('creating a meeting');
-        const response = await fetch('create-room');
-        let data = await response.json();
-        room_id = data.room_id;
-
-        meetingCodeBox.value = room_id;
-        meetingCodeBox.setAttribute('readonly', true);
+        console.log("bs")
+        return
     }
 
     let socket = new WebSocket(
-        `wss://${document.location.host}/ws/join-room?roomID=${room_id}`
+        `ws://${document.location.host}/ws/join-room?roomID=${room_id}`
     );
 
     webSocket = socket;
@@ -83,8 +73,6 @@ async function InitiateMeeting(e) {
 
     socket.addEventListener('message', async (e) => {
         const message = JSON.parse(e.data);
-
-        console.log(message);
 
         if (message.join) {
             console.log('Someone just joined the call');
@@ -101,7 +89,7 @@ async function InitiateMeeting(e) {
         }
 
         if (message.offer) {
-            handleOffer(message.offer, socket);
+            await handleOffer(message.offer, socket);
         }
 
         if (message.answer) {
@@ -175,117 +163,4 @@ const handleIceCandidate = (e) => {
 const handleTrackEvent = (e) => {
     console.log('Recieved tacks');
     remoteClientVideo.srcObject = e.streams[0];
-};
-///------------------///
-
-// event class
-class Event {
-    constructor(payload, type) {
-        this.payload = payload;
-        this.type = type;
-    }
-}
-
-class SendMessageEvent {
-    constructor(message, from) {
-        this.message = message;
-        this.from = from;
-    }
-}
-
-class IncomingMessageEvent {
-    constructor(message, from, timeSent) {
-        this.message = message;
-        this.from = from;
-        this.timeSent = timeSent;
-    }
-}
-
-// ----------------
-
-// global variables
-let connection = null;
-const SEND_MESSAGE = 'send_message';
-const INCOMING_MESSAGE = 'incoming_message';
-
-InitApp = () => {
-    console.log('setting up streamify');
-    const isConnected = ConnectToWebSocket();
-
-    if (!isConnected) return;
-
-    let status_element = document.getElementById('socket_status');
-    status_element.innerHTML =
-        'Connected <span class="inline-block w-2 h-2 mr-2 bg-green-600 rounded-full">';
-
-    return;
-};
-
-ConnectToWebSocket = () => {
-    if (!window['WebSocket']) {
-        alert('Unable to proceed, browser does not support websocket');
-        return false;
-    }
-
-    connection = new WebSocket(`wss://${document.location.host}/ws`);
-
-    connection.onmessage = function (evt) {
-        const eventData = JSON.parse(evt.data);
-        const event = Object.assign(new Event(), eventData);
-
-        routeEvent(event);
-    };
-    return true;
-};
-
-routeEvent = (event) => {
-    if (event.type === undefined) {
-        alert('unsupported action');
-        return false;
-    }
-
-    switch (event.type) {
-        case INCOMING_MESSAGE:
-            const messageEvent = Object.assign(
-                new IncomingMessageEvent(),
-                event.payload
-            );
-            appendChatForDisplay(messageEvent);
-            break;
-        default:
-            alert('unsupported message type');
-    }
-};
-
-appendChatForDisplay = (messageEvent) => {
-    let date = new Date(messageEvent.timeSent);
-    const formattedMsgTemplate = `<div class="flex justify-between w-full">
-  <p class="flex-auto  w-5/6"><span class="text-sm"></span> ${
-        messageEvent.message
-    }</p>
-  <p class="flext-none w-18 text-sm text-gray-300 italic">${date.toLocaleTimeString()}</p>
-</div>`;
-
-    let chatWall = document.getElementById('chat_messages');
-    chatWall.innerHTML = chatWall.innerHTML + formattedMsgTemplate;
-    chatWall.scrollTop = chatWall.scrollHeight;
-};
-
-SendEvent = (eventName, payload) => {
-    const event = new Event(payload, eventName);
-
-    connection.send(JSON.stringify(event));
-};
-
-SendMessage = () => {
-    console.log('sending message');
-    const newMessage = document.getElementById('message');
-    if (newMessage == null) return false;
-
-    // hardcoded usernames for now
-    const outgoingMsgEvent = new SendMessageEvent(newMessage.value, '');
-
-    //create sendMessage event
-    SendEvent(SEND_MESSAGE, outgoingMsgEvent);
-    return false;
 };

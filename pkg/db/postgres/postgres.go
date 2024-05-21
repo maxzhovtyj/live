@@ -5,8 +5,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func NewConn() (*sql.DB, error) {
-	conn, err := sql.Open("postgres", "postgres://max:1111@localhost:5432/live?sslmode=disable")
+func NewConn(connURI string) (*sql.DB, error) {
+	conn, err := sql.Open("postgres", connURI)
 	if err != nil {
 		return nil, err
 	}

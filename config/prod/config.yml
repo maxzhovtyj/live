@@ -1,0 +1,3 @@
+hostname: "https://194.164.59.123/"
+staticDirPath: "./static"
+DBConnection: "postgres://max:1111@localhost:5432/live?sslmode=disable"

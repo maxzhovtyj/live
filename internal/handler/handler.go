@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"flag"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
@@ -11,8 +10,6 @@ import (
 	"golang.org/x/time/rate"
 	"strconv"
 )
-
-var publicFolder = flag.String("public", "/Users/maksymzhovtaniuk/Desktop/univer4.2/диплом/live/internal/public/*.html", "Public folder path")
 
 type Handler struct {
 	s *service.Service
@@ -26,7 +23,7 @@ func (h *Handler) Init() *echo.Echo {
 	e := echo.New()
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.Recover())
+	//e.Use(middleware.Recover())
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(
 		rate.Limit(20),
 	)))
@@ -46,8 +43,9 @@ func (h *Handler) Init() *echo.Echo {
 	authorized.GET("modal", h.newChatModal)
 	authorized.POST("new-chat", h.newChat)
 
-	authorized.GET("video", h.VideoRoom)
-	authorized.GET("create-room", h.CreateRoomRequestHandler)
+	authorized.POST("create-meeting", h.CreateRoomRequestHandler)
+
+	authorized.GET("meeting", h.VideoRoom)
 	authorized.GET("ws/join-room", h.JoinRoomRequestHandler)
 
 	e.GET("/sign-in", h.SignInPage)
@@ -95,5 +93,4 @@ func (h *Handler) newChat(ctx echo.Context) error {
 	ctx.Response().Header().Set("HX-Redirect", "/chat")
 
 	return nil
-
 }

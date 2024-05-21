@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/maxzhovtyj/live/internal/pkg/templates/video"
 	"github.com/maxzhovtyj/live/internal/service"
@@ -13,41 +13,13 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var AllRooms = service.NewVideoRoom()
-
-type response struct {
-	RoomID string `json:"room_id"`
-}
-
-type BroadcastMessage struct {
-	Message map[string]interface{}
-	RoomID  string
-	Client  *websocket.Conn
-}
-
-var broadcast = make(chan BroadcastMessage)
-
-func broadcaster() {
-	for {
-		msg := <-broadcast
-
-		for _, client := range AllRooms.Participants[msg.RoomID] {
-			if client.Conn != msg.Client {
-				client.Mutex.Lock()
-
-				err := client.Conn.WriteJSON(msg.Message)
-				if err != nil {
-					log.Println(err)
-					client.Conn.Close()
-				}
-
-				client.Mutex.Unlock()
-			}
-		}
-	}
-}
-
 func (h *Handler) VideoRoom(ctx echo.Context) error {
+	meetingID := ctx.QueryParam("id")
+
+	if meetingID == "" {
+		return video.MeetingPage().Render(context.Background(), ctx.Response().Writer)
+	}
+
 	return video.VideoRoom().Render(context.Background(), ctx.Response().Writer)
 }
 
@@ -58,11 +30,13 @@ var videoUpgrader = websocket.Upgrader{
 }
 
 func (h *Handler) CreateRoomRequestHandler(ctx echo.Context) error {
-	ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
+	roomID := uuid.New()
 
-	roomID := AllRooms.CreateRoom()
+	h.s.Meeting.NewRoom(roomID.String())
 
-	return json.NewEncoder(ctx.Response()).Encode(response{RoomID: roomID})
+	ctx.Response().Header().Set("HX-Redirect", "/meeting?id="+roomID.String())
+
+	return nil
 }
 
 func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
@@ -78,22 +52,32 @@ func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
 		return err
 	}
 
-	AllRooms.InsertIntoRoom(roomID, false, ws)
+	u := h.getUserFromContext(ctx)
 
-	go broadcaster()
+	room := h.s.Meeting.GetRoom(roomID)
+
+	sub := room.Subscribe(u.ID, ws)
+	defer room.Unsubscribe(u.ID)
+
+	go func() {
+		for m := range sub.Messages {
+			log.Println(u.ID, "received message", m.Message)
+			err = sub.Write(m.Message)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+		}
+	}()
 
 	for {
-		var msg BroadcastMessage
+		var msg service.BroadcastMessage
 
-		err = ws.ReadJSON(&msg.Message)
+		err = sub.ReadJSON(&msg.Message)
 		if err != nil {
-			log.Println(err)
-			return err
+			return nil
 		}
 
-		msg.Client = ws
-		msg.RoomID = roomID
-
-		broadcast <- msg
+		room.Publish(u.ID, msg)
 	}
 }

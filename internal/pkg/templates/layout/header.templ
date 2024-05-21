@@ -9,7 +9,7 @@ templ Header() {
                 <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt=""/>
             </a>
             <a href="/chat" class="px-8 text-sm font-semibold leading-6 text-gray-900">Chats</a>
-            <a href="/meetings" class="px-8 text-sm font-semibold leading-6 text-gray-900">Meetings</a>
+            <a href="/meeting" class="px-8 text-sm font-semibold leading-6 text-gray-900">Meetings</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
             <a hx-post="/sign-out" type="button" class="flex items-center -mx-3 cursor-pointer block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
@@ -34,7 +34,7 @@ templ Header() {
     </div>
 
     <!-- Mobile menu, show/hide based on menu open state. -->
-    <div id="nav-content" class="lg:hidden" role="dialog" aria-modal="true">
+    <div id="nav-content" class="hidden" role="dialog" aria-modal="true">
         <!-- Background backdrop, show/hide based on slide-over state. -->
         <div class="fixed inset-0 z-10"></div>
         <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
@@ -52,7 +52,7 @@ templ Header() {
                     <div class="space-y-2 py-6">
                         <a href="/chat"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Chat</a>
-                        <a href="/meetings"
+                        <a href="/meeting"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Meetings</a>
                     </div>
                     <div class="py-6">

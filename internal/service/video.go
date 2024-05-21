@@ -5,13 +5,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
 type Participant struct {
 	Host  bool
-	ID    string
+	ID    int32
 	Conn  *websocket.Conn
 	Mutex sync.Mutex
 }
@@ -55,12 +54,11 @@ func (r *VideoRoom) CreateRoom() string {
 }
 
 // InsertIntoRoom join a room handler
-func (r *VideoRoom) InsertIntoRoom(roomID string, host bool, conn *websocket.Conn) {
+func (r *VideoRoom) InsertIntoRoom(uid int32, roomID string, host bool, conn *websocket.Conn) {
 	r.mx.Lock()
 	defer r.mx.Unlock()
 
-	clientID := uuid.New().String()
-	incomingParticipant := &Participant{host, clientID, conn, sync.Mutex{}}
+	incomingParticipant := &Participant{host, uid, conn, sync.Mutex{}}
 
 	r.Participants[roomID] = append(r.Participants[roomID], incomingParticipant)
 }

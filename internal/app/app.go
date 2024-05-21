@@ -1,6 +1,8 @@
 package app
 
 import (
+	"flag"
+	"github.com/maxzhovtyj/live/internal/config"
 	"github.com/maxzhovtyj/live/internal/handler"
 	"github.com/maxzhovtyj/live/internal/service"
 	"github.com/maxzhovtyj/live/internal/storage"
@@ -9,7 +11,9 @@ import (
 )
 
 func Run() {
-	dbConn, err := postgres.NewConn()
+	flag.Parse()
+
+	dbConn, err := postgres.NewConn(config.Get().DBConnection)
 	if err != nil {
 		log.Fatal(err)
 	}

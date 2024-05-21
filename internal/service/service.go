@@ -10,6 +10,12 @@ import (
 type Service struct {
 	User
 	Chat
+	Meeting
+}
+
+type Meeting interface {
+	GetRoom(id string) *Room
+	NewRoom(id string)
 }
 
 type User interface {
@@ -32,5 +38,6 @@ func New(repo *storage.Storage) *Service {
 	return &Service{
 		NewUserService(repo),
 		NewChatService(repo),
+		NewMeetingService(),
 	}
 }

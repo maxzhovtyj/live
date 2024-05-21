@@ -803,3 +803,8 @@ video {
   outline: 2px solid transparent !important;
   outline-offset: 2px !important;
 }
+
+.mirrored-video {
+  transform: scaleX(-1); /* Flip the video horizontally */
+  -webkit-transform: scaleX(-1); /* For Safari */
+}

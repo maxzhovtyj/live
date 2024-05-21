@@ -10,7 +10,11 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+import (
+	"fmt"
+	"github.com/maxzhovtyj/live/internal/config"
+	"github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+)
 
 func VideoRoom() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -31,7 +35,20 @@ func VideoRoom() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"pt-10 bg-[#1c1f2e] rounded-xl\"><div class=\"pl-10\"><h1 class=\"text-4xl mb-2 text-white font-bold\">Streamify</h1><div class=\"flex w-3/4 gap-2\"><input type=\"text\" id=\"meeting_code_box\" class=\"text-sm font-bold pl-4\"> <button class=\" rounded bg-white py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black\" id=\"joinMeeting\">Join Meeting</button> <span class=\"text-white\">New meeting?</span> <button id=\"createMeeting\" class=\"rounded bg-white py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-black \">Create Meeting</button></div><p id=\"socket_status\" class=\"text-gray-300 text-sm mb-4\">Not Connected <span class=\"inline-block w-2 h-2 mr-2 bg-red-600 rounded-full\"></span></p></div><div class=\"flex \"><div class=\"flex-auto w-96 border-t-2 border-r-2 border-gray-800\"><div class=\"flex gap-1 flex-col\"><video class=\"w-4/6\" autoplay controls=\"true\" id=\"localClientVideo\"></video><video class=\"w-2/6\" autoplay controls=\"true\" id=\"remoteClientVideo\"></video></div></div><div class=\"flex-auto w-16\"><div class=\"border-t-2 text-white p-4 border-b-2 border-gray-800\"><div class=\"flex text-lg font-semibold justify-start gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"w-6 h-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155\"></path></svg> Chat</div></div><div class=\"p-4 text-white overflow-y-scroll h-40\" id=\"chat_messages\"></div><div class=\"p-3 border-t-2 border-gray-800\"><form id=\"chat_message_input\"><input id=\"message\" class=\"flex text-lg text-white bg-[#1c1f2e] focus:!outline-none items-center h-10 w-full rounded px-3\" type=\"text\" placeholder=\"Type your message…\"></form></div></div></div></div><script src=\"https://194.164.59.123/static/index.js\"></script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"\"><div class=\"bg-gray-100 flex justify-center items-center min-h-screen\"><div class=\"flex flex-wrap justify-center gap-4\"><div class=\"flex-1 sm:flex-none sm:w-1/2 p-2\"><video class=\"rounded mirrored-video\" autoplay id=\"localClientVideo\"></video></div><div class=\"flex-1 sm:flex-none sm:w-1/2 p-2\"><video class=\"rounded mirrored-video\" autoplay id=\"remoteClientVideo\"></video></div></div></div></div><script src=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s/static/index.js", config.Get().Hostname))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/video/video.templ`, Line: 23, Col: 70}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> </script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
