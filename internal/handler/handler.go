@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/maxzhovtyj/live/internal/config"
 	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
 	"github.com/maxzhovtyj/live/internal/pkg/templates/components"
 	"github.com/maxzhovtyj/live/internal/service"
@@ -28,7 +29,7 @@ func (h *Handler) Init() *echo.Echo {
 		rate.Limit(20),
 	)))
 
-	e.Static("/static/", "./static")
+	e.Static("/static/", config.Get().StaticDirPath)
 
 	e.Use(middleware.Logger())
 
