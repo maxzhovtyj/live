@@ -14,7 +14,7 @@ type Service struct {
 }
 
 type Meeting interface {
-	GetRoom(id string) *Room
+	GetRoom(id string) (*Room, error)
 	NewRoom(id string)
 }
 

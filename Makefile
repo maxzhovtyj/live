@@ -14,6 +14,6 @@ LIVE_PATH=/var/www/live
 live-linux:
 	GOARCH=amd64 GOOS=linux go build -o bin/live-linux-amd64 ./cmd/live/
 
-deploy-live: live-linux
-	rsync -r bin/live-linux-amd64 config.yml cmd.sh ./static $(LIVE_USER)@$(LIVE_HOST):$(LIVE_PATH)
+deploy-live: sqlc templates live-linux
+	rsync -r bin/live-linux-amd64 ./config/prod/config.yml cmd.sh ./static $(LIVE_USER)@$(LIVE_HOST):$(LIVE_PATH)
 	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(LIVE_USER)@$(LIVE_HOST) "cd $(LIVE_PATH) && bash ./cmd.sh"

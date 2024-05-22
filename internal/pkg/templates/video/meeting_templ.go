@@ -33,7 +33,7 @@ func MeetingPage() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8\"><form hx-ext=\"response-targets\" hx-post=\"/create-meeting\" hx-target-*=\"#serious-errors\" class=\"flex justify-items-center space-y-6\"><button type=\"submit\" class=\"group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500\">Create Meeing</button></form></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8\"><form hx-ext=\"response-targets\" hx-post=\"/create-meeting\" hx-target-*=\"#serious-errors\" class=\"flex justify-center space-y-6\"><button type=\"submit\" class=\"group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500\">Create Meeing</button></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

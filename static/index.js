@@ -14,7 +14,7 @@ window.onload = () => {
 
         remoteClientVideo = document.getElementById('remoteClientVideo');
     }).then(() => {
-        InitiateMeeting().then(r => console.log(r));
+        InitiateMeeting().then();
     });
 };
 
@@ -62,7 +62,7 @@ async function InitiateMeeting() {
     }
 
     let socket = new WebSocket(
-        `ws://${document.location.host}/ws/join-room?roomID=${room_id}`
+        `wss://${document.location.host}/ws/join-room?roomID=${room_id}`
     );
 
     webSocket = socket;

@@ -10,12 +10,12 @@ templ VideoRoom() {
 @layout.Main() {
 <div class="">
     <div class="bg-gray-100 flex justify-center items-center min-h-screen">
-        <div class="flex flex-wrap justify-center gap-4">
-            <div class="flex-1 sm:flex-none sm:w-1/2 p-2">
-                <video class="rounded mirrored-video" autoplay id="localClientVideo"></video>
+        <div class="flex lg:flex-none justify-center gap-4">
+            <div class="flex-1 p-2">
+                <video class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="localClientVideo"></video>
             </div>
-            <div class="flex-1 sm:flex-none sm:w-1/2 p-2">
-                <video class="rounded mirrored-video" autoplay id="remoteClientVideo"></video>
+            <div class="flex-1 p-2">
+                <video class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="remoteClientVideo"></video>
             </div>
         </div>
     </div>

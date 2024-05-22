@@ -29,10 +29,10 @@ templ Chat(chatID int32) {
         </div>
     </div>
     <div class="justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-        <div id="chat-messages" class="overflow-y-auto h-96"></div>
         if chatID == -1 {
-        <h1>Please select chat</h1>
+        <h1 class="text-center">Please select chat</h1>
         } else {
+        <div id="chat-messages" class="overflow-y-auto h-96"></div>
         <form hx-on:submit="this.reset()" hx-ext="ws" ws-connect={ fmt.Sprintf(
         "/ws/chat?id=%d", chatID) } ws-send id="form"
         class="bg-white w-full pl-3 pr-1 py-1 rounded-3xl border border-gray-200 items-center gap-2 inline-flex
@@ -83,5 +83,12 @@ templ Chat(chatID int32) {
         }
     </div>
 </div>
+
+<script>
+    document.addEventListener("htmx:wsAfterMessage", e => {
+        const messagesDiv = document.getElementById("chat-messages");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    })
+</script>
 }
 }

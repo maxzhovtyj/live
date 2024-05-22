@@ -102,10 +102,10 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 }
 
 func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		t, err := c.Cookie(accessTokenCookie)
+	return func(ctx echo.Context) error {
+		t, err := ctx.Cookie(accessTokenCookie)
 		if err != nil {
-			err = c.Redirect(http.StatusFound, "/sign-in")
+			err = ctx.Redirect(http.StatusFound, "/sign-in")
 			if err != nil {
 				return err
 			}
@@ -115,12 +115,24 @@ func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
 
 		u, err := h.s.ParseToken(t.Value)
 		if err != nil {
+			ctx.SetCookie(&http.Cookie{
+				Name:    accessTokenCookie,
+				Path:    "/",
+				Expires: time.Now(),
+				MaxAge:  -1,
+			})
+
+			err = ctx.Redirect(http.StatusFound, "/sign-in")
+			if err != nil {
+				return err
+			}
+
 			return err
 		}
 
-		c.Set("currentUser", u)
+		ctx.Set("currentUser", u)
 
-		return next(c)
+		return next(ctx)
 	}
 }
 

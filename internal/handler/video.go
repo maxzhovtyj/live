@@ -54,14 +54,16 @@ func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
 
 	u := h.getUserFromContext(ctx)
 
-	room := h.s.Meeting.GetRoom(roomID)
+	room, err := h.s.Meeting.GetRoom(roomID)
+	if err != nil {
+		return err
+	}
 
 	sub := room.Subscribe(u.ID, ws)
 	defer room.Unsubscribe(u.ID)
 
 	go func() {
 		for m := range sub.Messages {
-			log.Println(u.ID, "received message", m.Message)
 			err = sub.Write(m.Message)
 			if err != nil {
 				log.Println(err)
@@ -75,7 +77,8 @@ func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
 
 		err = sub.ReadJSON(&msg.Message)
 		if err != nil {
-			return nil
+			log.Println(err)
+			return err
 		}
 
 		room.Publish(u.ID, msg)

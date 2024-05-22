@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"sync"
@@ -11,11 +12,16 @@ type MeetingService struct {
 	roomsMX sync.RWMutex
 }
 
-func (m *MeetingService) GetRoom(id string) *Room {
+func (m *MeetingService) GetRoom(id string) (*Room, error) {
 	m.roomsMX.RLock()
-	defer m.roomsMX.RUnlock()
+	r, ok := m.rooms[id]
+	m.roomsMX.RUnlock()
 
-	return m.rooms[id]
+	if ok && r != nil {
+		return r, nil
+	}
+
+	return nil, fmt.Errorf("no such room")
 }
 
 func (m *MeetingService) NewRoom(id string) {
@@ -43,8 +49,9 @@ func (r *Room) Subscribe(uid int32, conn *websocket.Conn) *MeetParticipant {
 
 	r.participants[uid] = &MeetParticipant{
 		ID:       uid,
-		Client:   conn,
 		Messages: make(chan BroadcastMessage),
+
+		conn: conn,
 	}
 
 	return r.participants[uid]
@@ -63,12 +70,10 @@ func (r *Room) Publish(uid int32, msg BroadcastMessage) {
 	r.participantsMX.RLock()
 	defer r.participantsMX.RUnlock()
 
-	for _, p := range r.participants {
-		//if id == uid {
-		//	continue
-		//}
-
-		log.Println("publish message to", p.ID)
+	for id, p := range r.participants {
+		if id == uid {
+			continue
+		}
 
 		p.Messages <- msg
 	}
@@ -77,24 +82,18 @@ func (r *Room) Publish(uid int32, msg BroadcastMessage) {
 type MeetParticipant struct {
 	ID int32
 
-	Client *websocket.Conn
+	conn   *websocket.Conn
 	connMX sync.RWMutex
 
 	Messages chan BroadcastMessage
 }
 
 func (mp *MeetParticipant) Write(v any) error {
-	mp.connMX.Lock()
-	defer mp.connMX.Unlock()
-
-	return mp.Client.WriteJSON(v)
+	return mp.conn.WriteJSON(v)
 }
 
 func (mp *MeetParticipant) ReadJSON(v any) error {
-	mp.connMX.RLock()
-	defer mp.connMX.RUnlock()
-
-	return mp.Client.ReadJSON(v)
+	return mp.conn.ReadJSON(v)
 }
 
 type BroadcastMessage struct {

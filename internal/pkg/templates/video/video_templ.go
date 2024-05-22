@@ -35,7 +35,7 @@ func VideoRoom() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"\"><div class=\"bg-gray-100 flex justify-center items-center min-h-screen\"><div class=\"flex flex-wrap justify-center gap-4\"><div class=\"flex-1 sm:flex-none sm:w-1/2 p-2\"><video class=\"rounded mirrored-video\" autoplay id=\"localClientVideo\"></video></div><div class=\"flex-1 sm:flex-none sm:w-1/2 p-2\"><video class=\"rounded mirrored-video\" autoplay id=\"remoteClientVideo\"></video></div></div></div></div><script src=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"\"><div class=\"bg-gray-100 flex justify-center items-center min-h-screen\"><div class=\"flex lg:flex-none justify-center gap-4\"><div class=\"flex-1 p-2\"><video class=\"w-full h-full rounded\" style=\"transform: scaleX(-1);\" autoplay id=\"localClientVideo\"></video></div><div class=\"flex-1 p-2\"><video class=\"w-full h-full rounded\" style=\"transform: scaleX(-1);\" autoplay id=\"remoteClientVideo\"></video></div></div></div></div><script src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
