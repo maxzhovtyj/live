@@ -16,11 +16,13 @@ import (
 func (h *Handler) VideoRoom(ctx echo.Context) error {
 	meetingID := ctx.QueryParam("id")
 
+	c := getContext(ctx)
+
 	if meetingID == "" {
-		return video.MeetingPage().Render(context.Background(), ctx.Response().Writer)
+		return video.MeetingPage(c).Render(context.Background(), ctx.Response().Writer)
 	}
 
-	return video.VideoRoom().Render(context.Background(), ctx.Response().Writer)
+	return video.VideoRoom(c).Render(context.Background(), ctx.Response().Writer)
 }
 
 var videoUpgrader = websocket.Upgrader{
@@ -52,7 +54,7 @@ func (h *Handler) JoinRoomRequestHandler(ctx echo.Context) error {
 		return err
 	}
 
-	u := h.getUserFromContext(ctx)
+	u := getContext(ctx).User
 
 	room, err := h.s.Meeting.GetRoom(roomID)
 	if err != nil {

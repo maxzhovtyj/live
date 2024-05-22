@@ -4,10 +4,11 @@ import (
     "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
     "fmt"
     "github.com/maxzhovtyj/live/internal/config"
+    "github.com/maxzhovtyj/live/internal/models"
 )
 
-templ VideoRoom() {
-@layout.Main() {
+templ VideoRoom(c models.Context) {
+@layout.Main(c) {
 <div class="">
     <div class="bg-gray-100 flex justify-center items-center min-h-screen">
         <div class="flex lg:flex-none justify-center gap-4">

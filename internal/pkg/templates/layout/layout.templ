@@ -1,6 +1,7 @@
 package layout
 
 import (
+    "github.com/maxzhovtyj/live/internal/models"
 )
 
 templ Index() {
@@ -22,9 +23,9 @@ templ Index() {
 </html>
 }
 
-templ Main() {
+templ Main(c models.Context) {
 @Index() {
-@Header()
+@Header(c)
 { children... }
 }
 }

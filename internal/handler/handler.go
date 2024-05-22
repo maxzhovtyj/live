@@ -65,7 +65,7 @@ func (h *Handler) newChatModal(ctx echo.Context) error {
 		return err
 	}
 
-	curr := h.getUserFromContext(ctx)
+	curr := getContext(ctx).User
 	var other []db.User
 
 	for _, u := range users {
@@ -84,7 +84,7 @@ func (h *Handler) newChat(ctx echo.Context) error {
 		return err
 	}
 
-	u := h.getUserFromContext(ctx)
+	u := getContext(ctx).User
 
 	err = h.s.Chat.NewChat(name, []int32{int32(user), u.ID}...)
 	if err != nil {

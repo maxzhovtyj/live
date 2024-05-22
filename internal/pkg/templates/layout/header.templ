@@ -1,8 +1,11 @@
 package layout
 
-templ Header() {
+import "github.com/maxzhovtyj/live/internal/models"
+
+templ Header(c models.Context) {
 <header class="bg-white relative">
-    <nav class="hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8" aria-label="Global">
+    <nav class="hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8"
+         aria-label="Global">
         <div class="flex -m-1.5 p-1.5 items-center justify-between">
             <a href="/" class="px-8 -m-1.5 p-1.5">
                 <div class="text-4xl font-bold tracking-wide text-gray-900">
@@ -13,12 +16,21 @@ templ Header() {
             <a href="/meeting" class="px-8 text-sm font-semibold leading-6 text-gray-900">Meetings</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a hx-post="/sign-out" type="button" class="flex items-center -mx-3 cursor-pointer block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                Log out
-                <svg class="ml-2 w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"></path>
-                </svg>
-            </a>
+            <div class="w-fit flex">
+                <p class="flex justify-start align-items-center mr-4">{c.User.FirstName} {c.User.LastName}</p>
+                <div class="border-t sm:border-t-0 sm:border-s border-gray-200 dark:border-neutral-700"></div>
+                <button class="ml-4 btn btn-primary pl-4 rounded-3xl">
+                    <a hx-post="/sign-out" type="button"
+                       class="flex items-center">
+                        Log out
+                        <svg class="ml-2 w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                    </a>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -40,7 +52,8 @@ templ Header() {
         <div class="fixed inset-0 z-10"></div>
         <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div class="flex items-center justify-between">
-                <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" hx-on:click="document.getElementById('nav-content').classList.toggle('hidden');">
+                <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700"
+                        hx-on:click="document.getElementById('nav-content').classList.toggle('hidden');">
                     <span class="sr-only">Close menu</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                          aria-hidden="true">

@@ -10,7 +10,9 @@ import "context"
 import "io"
 import "bytes"
 
-import ()
+import (
+	"github.com/maxzhovtyj/live/internal/models"
+)
 
 func Index() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -44,7 +46,7 @@ func Index() templ.Component {
 	})
 }
 
-func Main() templ.Component {
+func Main(c models.Context) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -63,7 +65,7 @@ func Main() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			templ_7745c5c3_Err = Header().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = Header(c).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

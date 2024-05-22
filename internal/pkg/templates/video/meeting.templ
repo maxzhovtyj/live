@@ -1,11 +1,12 @@
 package video
 
 import (
-"github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+    "github.com/maxzhovtyj/live/internal/pkg/templates/layout"
+    "github.com/maxzhovtyj/live/internal/models"
 )
 
-templ MeetingPage() {
-@layout.Main() {
+templ MeetingPage(c models.Context) {
+@layout.Main(c) {
 <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <form hx-ext="response-targets" hx-post="/create-meeting" hx-target-*="#serious-errors"
           class="flex justify-center space-y-6">

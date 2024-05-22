@@ -16,12 +16,12 @@ import (
 )
 
 func (h *Handler) Index(ctx echo.Context) error {
-	return templates.Chat(-1).Render(context.Background(), ctx.Response().Writer)
+	return templates.Chat(getContext(ctx), -1).Render(context.Background(), ctx.Response().Writer)
 }
 
 func (h *Handler) Chat(ctx echo.Context) error {
 	if ctx.QueryParam("id") == "" {
-		return templates.Chat(-1).Render(context.Background(), ctx.Response().Writer)
+		return templates.Chat(getContext(ctx), -1).Render(context.Background(), ctx.Response().Writer)
 	}
 
 	cid, err := strconv.Atoi(ctx.QueryParam("id"))
@@ -29,13 +29,13 @@ func (h *Handler) Chat(ctx echo.Context) error {
 		return err
 	}
 
-	return templates.Chat(int32(cid)).Render(context.Background(), ctx.Response().Writer)
+	return templates.Chat(getContext(ctx), int32(cid)).Render(context.Background(), ctx.Response().Writer)
 }
 
 func (h *Handler) Conversations(ctx echo.Context) error {
-	user := h.getUserFromContext(ctx)
+	c := getContext(ctx)
 
-	conversations, err := h.s.Chat.GetUserConversations(user.ID)
+	conversations, err := h.s.Chat.GetUserConversations(c.User.ID)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (h *Handler) JoinChat(ctx echo.Context) error {
 		return err
 	}
 
-	chatConn, room := h.s.Chat.Join(cid, conn, h.getUserFromContext(ctx))
+	chatConn, room := h.s.Chat.Join(cid, conn, getContext(ctx).User)
 	defer room.Leave(chatConn.User.ID)
 
 	messages, err := h.s.Chat.GetRoomMessages(cid)

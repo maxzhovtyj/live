@@ -136,6 +136,10 @@ func (h *Handler) Authorized(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func (h *Handler) getUserFromContext(ctx echo.Context) db.User {
-	return ctx.Get("currentUser").(db.User)
+func getContext(ctx echo.Context) models.Context {
+	u := ctx.Get("currentUser").(db.User)
+
+	return models.Context{
+		User: u,
+	}
 }
