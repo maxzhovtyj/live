@@ -25,14 +25,14 @@ func Header(c models.Context) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-white relative\"><nav class=\"hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8\" aria-label=\"Global\"><div class=\"flex -m-1.5 p-1.5 items-center justify-between\"><a href=\"/\" class=\"px-8 -m-1.5 p-1.5\"><div class=\"text-4xl font-bold tracking-wide text-gray-900\">LIVE</div></a> <a href=\"/chat\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Chats</a> <a href=\"/meeting\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Meetings</a></div><div class=\"hidden lg:flex lg:flex-1 lg:justify-end\"><div class=\"w-fit flex\"><p class=\"flex justify-start align-items-center mr-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-white relative\"><nav class=\"hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8\" aria-label=\"Global\"><div class=\"flex -m-1.5 p-1.5 items-center justify-between\"><a href=\"/\" class=\"flex align-items-center px-8 -m-1.5 p-1.5\"><span class=\"flex w-3 h-3 me-3 bg-red-500 rounded-full mr-1\"></span><div class=\"text-4xl font-bold tracking-wide text-gray-900\">LIVE</div></a> <a href=\"/chat\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Chats</a> <a href=\"/meeting\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Meetings</a></div><div class=\"hidden lg:flex lg:flex-1 lg:justify-end\"><div class=\"w-fit flex\"><p class=\"flex justify-start align-items-center mr-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.FirstName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 20, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 21, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -45,7 +45,7 @@ func Header(c models.Context) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.LastName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 20, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 21, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
