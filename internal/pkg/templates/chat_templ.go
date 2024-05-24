@@ -40,7 +40,7 @@ func Chat(c models.Context, chatID int32) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if chatID == -1 {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-center m-4 text-4xl font-bold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white\">Please select chat</h1>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-center m-4 text-4xl dark:text-white\">Please select chat</h1>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

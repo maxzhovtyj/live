@@ -31,7 +31,7 @@ templ Chat(c models.Context, chatID int32) {
     </div>
     <div class="justify-between flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
         if chatID == -1 {
-        <h1 class="text-center m-4 text-4xl font-bold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Please select chat</h1>
+        <h1 class="text-center m-4 text-4xl dark:text-white">Please select chat</h1>
         } else {
         <div id="chat-messages" class="overflow-y-auto h-full"></div>
         <form hx-on:submit="this.reset()" hx-ext="ws" ws-connect={ fmt.Sprintf(

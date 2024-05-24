@@ -13,10 +13,10 @@ templ VideoRoom(c models.Context) {
     <div class="bg-gray-100 flex justify-center items-center min-h-screen">
         <div class="flex lg:flex-none justify-center gap-4">
             <div class="flex-1 p-2">
-                <video muted class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="localClientVideo"></video>
+                <video playsinline muted class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="localClientVideo"></video>
             </div>
             <div class="flex-1 p-2">
-                <video class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="remoteClientVideo"></video>
+                <video playsinline class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay id="remoteClientVideo"></video>
             </div>
         </div>
     </div>
