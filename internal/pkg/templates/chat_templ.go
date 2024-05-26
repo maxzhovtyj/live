@@ -35,12 +35,12 @@ func Chat(c models.Context, chatID int32) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-full mx-auto flex max-w-7xl justify-between p-6 lg:px-8 gap-2 flex-wrap\"><div class=\"flex-1 rounded-2xl py-4 lg:p-2 bg-gray-100 flex flex-col align-items-center\"><div hx-trigger=\"load\" hx-get=\"/conversations\"></div><button hx-get=\"/modal\" hx-target=\"#modals-here\" hx-trigger=\"click\" data-bs-toggle=\"modal\" data-bs-target=\"#modals-here\" class=\"btn btn-primary mt-8\">New Chat</button><div id=\"modals-here\" class=\"modal modal-blur fade\" style=\"display: none\" aria-hidden=\"false\" tabindex=\"-1\"><div class=\"modal-dialog modal-lg modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"></div></div></div></div><div class=\"justify-between flex flex-grow flex-col rounded-2xl bg-gray-100 h-full p-4 lg:p-2\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-full mx-auto flex max-w-7xl justify-between p-6 lg:px-8 gap-2 flex-wrap\"><div class=\"flex-1 rounded-2xl py-4 lg:p-2 bg-gray-100 flex flex-col gap-2 align-items-center\"><div hx-trigger=\"load\" hx-get=\"/conversations\"></div><button hx-get=\"/modal\" hx-target=\"#modals-here\" hx-trigger=\"click\" data-bs-toggle=\"modal\" data-bs-target=\"#modals-here\" class=\"btn btn-primary\">New Chat</button><div id=\"modals-here\" class=\"modal modal-blur fade\" style=\"display: none\" aria-hidden=\"false\" tabindex=\"-1\"><div class=\"modal-dialog modal-lg modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"></div></div></div></div><div class=\"justify-between flex flex-grow flex-col rounded-2xl bg-gray-100 h-full p-4 lg:p-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if chatID == -1 {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-center m-4 text-4xl dark:text-white break-words\">Please select chat</h1>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-center m-4 text-4xl break-words\">Please select chat</h1>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
