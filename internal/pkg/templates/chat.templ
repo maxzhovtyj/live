@@ -8,7 +8,7 @@ import (
 
 templ Chat(c models.Context, chatID int32) {
 @layout.Main(c) {
-<div class="h-full mx-auto flex max-w-7xl justify-between p-6 lg:px-8 gap-2 flex-wrap">
+<div class="h-screen mx-auto flex max-w-7xl justify-between p-6 lg:px-8 gap-2 flex-wrap">
     <div class="flex-1 rounded-2xl py-4 lg:p-2 bg-gray-100 flex flex-col gap-2 align-items-center">
         <div hx-trigger="load" hx-get="/conversations"></div>
         <button hx-get="/modal"
@@ -57,6 +57,10 @@ templ Chat(c models.Context, chatID int32) {
     document.addEventListener("htmx:wsAfterMessage", e => {
         const messagesDiv = document.getElementById("chat-messages");
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    })
+    document.addEventListener("htmx:ws-open", e => {
+        const messagesDiv = document.getElementById("chat-messages");
+        messagesDiv.innerText = ""
     })
 </script>
 }
