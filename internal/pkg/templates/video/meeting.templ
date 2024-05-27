@@ -19,11 +19,22 @@ templ MeetingPage(c models.Context) {
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima
                     officia consequatur adipisci tenetur repudiandae rerum quos.
                 </p>
-                <form hx-ext="response-targets" hx-post="/create-meeting" hx-target-*="#serious-errors"
+                <form hx-post="/create-meeting"
                       class="flex justify-center space-y-6 mt-4">
                     <button type="submit"
                             class="btn btn-primary">
                         Create Meeing
+                    </button>
+                </form>
+                <p>OR</p>
+                <form class="w-full mx-auto mt-3 lg:w-1/2 flex gap-2 justify-center space-y-6" action="/meeting">
+                    <label for="id"></label>
+                    <input id="id" name="id" type="text" required
+                           class="mt-0 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                           placeholder="Meeting ID"/>
+                    <button type="submit"
+                            class="mt-0 btn btn-primary">
+                        Join
                     </button>
                 </form>
             </div>
