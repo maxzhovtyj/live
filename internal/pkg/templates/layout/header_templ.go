@@ -10,7 +10,10 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/maxzhovtyj/live/internal/models"
+import (
+	"fmt"
+	"github.com/maxzhovtyj/live/internal/models"
+)
 
 func Header(c models.Context) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -25,16 +28,29 @@ func Header(c models.Context) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-white relative\"><nav class=\"hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8\" aria-label=\"Global\"><div class=\"flex -m-1.5 p-1.5 items-center justify-between\"><a href=\"/\" class=\"flex align-items-center px-8 -m-1.5 p-1.5\"><span class=\"flex w-3 h-3 me-3 bg-red-500 rounded-full mr-1\"></span><div class=\"text-4xl font-bold tracking-wide text-gray-900\">LIVE</div></a> <a href=\"/chat\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Chats</a> <a href=\"/meeting\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Meetings</a></div><div class=\"hidden lg:flex lg:flex-1 lg:justify-end\"><div class=\"w-fit flex\"><p class=\"flex justify-start align-items-center mr-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"bg-white relative\"><nav class=\"hidden mx-auto lg:flex lg:flex-1 max-w-7xl lg-items-center lg-justify-between p-6 lg:px-8\" aria-label=\"Global\"><div class=\"flex -m-1.5 p-1.5 items-center justify-between\"><a href=\"/\" class=\"flex align-items-center px-8 -m-1.5 p-1.5\"><span class=\"flex w-3 h-3 me-3 bg-red-500 rounded-full mr-1\"></span><div class=\"text-4xl font-bold tracking-wide text-gray-900\">LIVE</div></a> <a href=\"/chat\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Chats</a> <a href=\"/meeting\" class=\"px-8 text-sm font-semibold leading-6 text-gray-900\">Meetings</a></div><div class=\"hidden lg:flex lg:flex-1 lg:justify-end\"><div class=\"w-fit flex\"><input id=\"current-user-id\" type=\"hidden\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.FirstName)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", c.User.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 21, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 24, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><p class=\"flex justify-start align-items-center mr-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.FirstName)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 25, Col: 87}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,16 +58,16 @@ func Header(c models.Context) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.LastName)
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(c.User.LastName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 21, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pkg/templates/layout/header.templ`, Line: 25, Col: 105}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"border-t sm:border-t-0 sm:border-s border-gray-200 dark:border-neutral-700\"></div><button hx-post=\"/sign-out\" type=\"button\" class=\"ml-4 btn btn-primary pl-4 rounded-3xl flex items-center\">Log out <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"size-6 ml-2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15\"></path></svg></button></div></div></nav><div class=\"lg:hidden flex items-end fixed top-0 right-0 m-2\"><button class=\"relative group\" hx-on:click=\"document.getElementById(&#39;nav-content&#39;).classList.toggle(&#39;hidden&#39;);\"><div class=\"relative flex overflow-hidden items-center justify-center rounded-full w-[50px] h-[50px] transform transition-all bg-slate-700 ring-0 ring-gray-300 hover:ring-8 group-focus:ring-4 ring-opacity-30 duration-200 shadow-md\"><div class=\"flex flex-col justify-between w-[20px] h-[20px] transform transition-all duration-300 origin-center overflow-hidden group-focus:translate-x-1.5\"><div class=\"bg-white h-[2px] w-7 transform transition-all duration-300 origin-left group-focus:rotate-[42deg] group-focus:w-2/3 delay-150\"></div><div class=\"bg-white h-[2px] w-7 rounded transform transition-all duration-300 group-focus:translate-x-10\"></div><div class=\"bg-white h-[2px] w-7 transform transition-all duration-300 origin-left group-focus:-rotate-[42deg] group-focus:w-2/3 delay-150\"></div></div></div></button></div><!-- Mobile menu, show/hide based on menu open state. --><div id=\"nav-content\" class=\"hidden\" role=\"dialog\" aria-modal=\"true\"><!-- Background backdrop, show/hide based on slide-over state. --><div class=\"fixed inset-0 z-10\"><div class=\"w-full h-full overflow-y-auto bg-white p-6\"><div class=\"flex items-center justify-between\"><button type=\"button\" class=\"-m-2.5 rounded-md p-2.5 text-gray-700\" hx-on:click=\"document.getElementById(&#39;nav-content&#39;).classList.toggle(&#39;hidden&#39;);\"><span class=\"sr-only text-2xl\">Close menu</span> <svg class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><div class=\"mt-6 flow-root\"><div class=\"-my-6 divide-y divide-gray-500/10\"><div class=\"space-y-2 py-6\"><a href=\"/chat\" class=\"text-2xl block rounded-lg px-3 py-2 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Chat</a> <a href=\"/meeting\" class=\"text-2xl block rounded-lg px-3 py-2 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Meetings</a></div><div class=\"py-6\"><a hx-post=\"/sign-out\" type=\"button\" class=\"text-2xl cursor-pointer block rounded-lg px-3 py-2.5 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Log out</a></div></div></div></div></div></div></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"border-t sm:border-t-0 sm:border-s border-gray-200 dark:border-neutral-700\"></div><button hx-post=\"/sign-out\" type=\"button\" class=\"ml-4 btn btn-primary pl-4 rounded-3xl flex items-center\">Log out <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"size-6 ml-2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15\"></path></svg></button></div></div></nav><div class=\"lg:hidden z-50 flex items-end fixed top-0 right-0 m-2\"><button class=\"relative group\" hx-on:click=\"document.getElementById(&#39;nav-content&#39;).classList.toggle(&#39;hidden&#39;);\"><div class=\"relative flex overflow-hidden items-center justify-center rounded-full w-[50px] h-[50px] transform transition-all bg-slate-700 ring-0 ring-gray-300 hover:ring-8 group-focus:ring-4 ring-opacity-30 duration-200 shadow-md\"><div class=\"flex flex-col justify-between w-[20px] h-[20px] transform transition-all duration-300 origin-center overflow-hidden group-focus:translate-x-1.5\"><div class=\"bg-white h-[2px] w-7 transform transition-all duration-300 origin-left group-focus:rotate-[42deg] group-focus:w-2/3 delay-150\"></div><div class=\"bg-white h-[2px] w-7 rounded transform transition-all duration-300 group-focus:translate-x-10\"></div><div class=\"bg-white h-[2px] w-7 transform transition-all duration-300 origin-left group-focus:-rotate-[42deg] group-focus:w-2/3 delay-150\"></div></div></div></button></div><div id=\"nav-content\" class=\"hidden\" role=\"dialog\" aria-modal=\"true\"><!-- Background backdrop, show/hide based on slide-over state. --><div class=\"fixed inset-0 z-10\"><div class=\"w-full h-full overflow-y-auto bg-white p-6\"><div class=\"flex items-center justify-between\"><button type=\"button\" class=\"-m-2.5 rounded-md p-2.5 text-gray-700\" hx-on:click=\"document.getElementById(&#39;nav-content&#39;).classList.toggle(&#39;hidden&#39;);\"><span class=\"sr-only text-2xl\">Close menu</span> <svg class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><div class=\"mt-6 flow-root\"><div class=\"-my-6 divide-y divide-gray-500/10\"><div class=\"space-y-2 py-6\"><a href=\"/chat\" class=\"text-2xl block rounded-lg px-3 py-2 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Chat</a> <a href=\"/meeting\" class=\"text-2xl block rounded-lg px-3 py-2 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Meetings</a></div><div class=\"py-6\"><a hx-post=\"/sign-out\" type=\"button\" class=\"text-2xl cursor-pointer block rounded-lg px-3 py-2.5 font-semibold leading-7 text-gray-900 hover:bg-gray-50\">Log out</a></div></div></div></div></div></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

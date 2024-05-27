@@ -2,7 +2,7 @@
 let localClientStream;
 let webSocket;
 let localClientVideo;
-let remoteClientVideo;
+let videoContainer;
 let peerRef;
 
 const muteAudioButton = document.getElementById('mute-microphone-btn');
@@ -55,7 +55,7 @@ window.onload = () => {
         localClientVideo.srcObject = stream;
         localClientStream = stream;
 
-        remoteClientVideo = document.getElementById('remoteClientVideo');
+        videoContainer = document.getElementById('video-container');
     }).then(() => {
         InitiateMeeting().then();
     });
@@ -105,20 +105,24 @@ async function InitiateMeeting() {
     }
 
     let socket = new WebSocket(
-        `wss://${document.location.host}/ws/join-room?roomID=${room_id}`
+        `ws://${document.location.host}/ws/join-room?roomID=${room_id}`
     );
 
     webSocket = socket;
 
+    let uid = document.getElementById("current-user-id").value
+
+    console.log("user id", uid)
+
     socket.addEventListener('open', () => {
-        socket.send(JSON.stringify({join: true}));
+        socket.send(JSON.stringify({join: true, uid: uid}));
     });
 
     socket.addEventListener('message', async (e) => {
         const message = JSON.parse(e.data);
 
         if (message.join) {
-            console.log('Someone just joined the call');
+            console.log('Someone just joined the call', message);
             callUser();
         }
 
@@ -132,7 +136,7 @@ async function InitiateMeeting() {
         }
 
         if (message.offer) {
-            await handleOffer(message.offer, socket);
+            await handleOffer(message.offer, socket, uid);
         }
 
         if (message.answer) {
@@ -141,10 +145,10 @@ async function InitiateMeeting() {
     });
 }
 
-const handleOffer = async (offer, socket) => {
+const handleOffer = async (offer, socket, uid) => {
     console.log('recieved an offer, creating an answer');
 
-    peerRef = createPeer();
+    peerRef = createPeer(uid);
 
     await peerRef.setRemoteDescription(new RTCSessionDescription(offer));
 
@@ -162,16 +166,16 @@ const handleAnswer = (answer) => {
     peerRef.setRemoteDescription(new RTCSessionDescription(answer));
 };
 
-const callUser = () => {
+const callUser = (uid) => {
     console.log('calling other remote user');
-    peerRef = createPeer();
+    peerRef = createPeer(uid);
 
     localClientStream.getTracks().forEach((track) => {
         peerRef.addTrack(track, localClientStream);
     });
 };
 
-const createPeer = () => {
+const createPeer = (uid) => {
     console.log('creating peer connection');
     const peer = new RTCPeerConnection({
         iceServers: [{urls: 'stun:stun.l.google.com:19302'}],
@@ -179,7 +183,7 @@ const createPeer = () => {
 
     peer.onnegotiationneeded = handleNegotiationNeeded;
     peer.onicecandidate = handleIceCandidate;
-    peer.ontrack = handleTrackEvent;
+    peer.ontrack = (e) => handleTrackEvent(e, uid);
 
     return peer;
 };
@@ -203,7 +207,26 @@ const handleIceCandidate = (e) => {
     }
 };
 
-const handleTrackEvent = (e) => {
-    console.log('Recieved tacks');
-    remoteClientVideo.srcObject = e.streams[0];
+const handleTrackEvent = (e, uid) => {
+    console.log('received tracks', uid);
+
+    let videoElement = document.getElementById(`remoteClientVideo-${uid}`)
+
+    if (!videoElement) {
+        const newDiv = document.createElement('div');
+        newDiv.className = 'flex-1 p-2';
+
+        videoElement = document.createElement('video');
+        videoElement.playsInline = true;
+        videoElement.className = 'w-full h-full rounded';
+        videoElement.style.transform = 'scaleX(-1)';
+        videoElement.autoplay = true;
+        videoElement.id = `remoteClientVideo-${uid}`
+
+        newDiv.appendChild(videoElement);
+
+        videoContainer.appendChild(newDiv);
+    }
+
+    videoElement.srcObject = e.streams[0];
 };
