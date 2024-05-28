@@ -170,9 +170,9 @@ const handleAnswer = (answer) => {
     peerRef.setRemoteDescription(new RTCSessionDescription(answer));
 };
 
-const callUser = (uid) => {
+const callUser = () => {
     console.log('calling other remote user');
-    peerRef = createPeer(uid);
+    peerRef = createPeer();
 
     localClientStream.getTracks().forEach((track) => {
         peerRef.addTrack(track, localClientStream);
