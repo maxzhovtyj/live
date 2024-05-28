@@ -104,15 +104,19 @@ async function InitiateMeeting() {
         return
     }
 
+    let wsSchema = "wss"
+
+    if (location.href.slice(0, 5) !== 'https') {
+        wsSchema = "ws"
+    }
+
     let socket = new WebSocket(
-        `ws://${document.location.host}/ws/join-room?roomID=${room_id}`
+        `${wsSchema}://${document.location.host}/ws/join-room?roomID=${room_id}`
     );
 
     webSocket = socket;
 
     let uid = document.getElementById("current-user-id").value
-
-    console.log("user id", uid)
 
     socket.addEventListener('open', () => {
         socket.send(JSON.stringify({join: true, uid: uid}));
@@ -136,7 +140,7 @@ async function InitiateMeeting() {
         }
 
         if (message.offer) {
-            await handleOffer(message.offer, socket, uid);
+            await handleOffer(message.offer, socket);
         }
 
         if (message.answer) {
@@ -145,10 +149,10 @@ async function InitiateMeeting() {
     });
 }
 
-const handleOffer = async (offer, socket, uid) => {
+const handleOffer = async (offer, socket) => {
     console.log('recieved an offer, creating an answer');
 
-    peerRef = createPeer(uid);
+    peerRef = createPeer();
 
     await peerRef.setRemoteDescription(new RTCSessionDescription(offer));
 
@@ -175,7 +179,7 @@ const callUser = (uid) => {
     });
 };
 
-const createPeer = (uid) => {
+const createPeer = () => {
     console.log('creating peer connection');
     const peer = new RTCPeerConnection({
         iceServers: [{urls: 'stun:stun.l.google.com:19302'}],
@@ -183,7 +187,7 @@ const createPeer = (uid) => {
 
     peer.onnegotiationneeded = handleNegotiationNeeded;
     peer.onicecandidate = handleIceCandidate;
-    peer.ontrack = (e) => handleTrackEvent(e, uid);
+    peer.ontrack = handleTrackEvent;
 
     return peer;
 };
@@ -207,10 +211,10 @@ const handleIceCandidate = (e) => {
     }
 };
 
-const handleTrackEvent = (e, uid) => {
-    console.log('received tracks', uid);
+const handleTrackEvent = (e) => {
+    console.log('received tracks');
 
-    let videoElement = document.getElementById(`remoteClientVideo-${uid}`)
+    let videoElement = document.getElementById(`remoteClientVideo`)
 
     if (!videoElement) {
         const newDiv = document.createElement('div');
@@ -221,7 +225,7 @@ const handleTrackEvent = (e, uid) => {
         videoElement.className = 'w-full h-full rounded';
         videoElement.style.transform = 'scaleX(-1)';
         videoElement.autoplay = true;
-        videoElement.id = `remoteClientVideo-${uid}`
+        videoElement.id = `remoteClientVideo`
 
         newDiv.appendChild(videoElement);
 
