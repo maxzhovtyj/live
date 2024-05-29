@@ -218,11 +218,11 @@ const handleTrackEvent = (e) => {
 
     if (!videoElement) {
         const newDiv = document.createElement('div');
-        newDiv.className = 'flex-1 p-2';
+        newDiv.className = 'p-4 max-w-lg transition ease-in-out delay-150';
 
         videoElement = document.createElement('video');
         videoElement.playsInline = true;
-        videoElement.className = 'w-full h-full rounded';
+        videoElement.className = 'flex rounded-lg h-full w-full';
         videoElement.style.transform = 'scaleX(-1)';
         videoElement.autoplay = true;
         videoElement.id = `remoteClientVideo`

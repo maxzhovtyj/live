@@ -11,9 +11,9 @@ templ VideoRoom(c models.Context) {
 @layout.Main(c) {
 <div>
     <div class="bg-gray-100 flex justify-center items-center min-h-screen">
-        <div id="video-container" class="flex lg:flex-none justify-center gap-4">
-            <div class="flex-1 p-2">
-                <video playsinline muted class="w-full h-full rounded" style="transform: scaleX(-1);" autoplay
+        <div id="video-container" class="flex flex-wrap justify-center mt-10">
+            <div class="p-4 max-w-lg transition ease-in-out delay-150">
+                <video playsinline muted class="flex rounded-lg h-full w-full" style="transform: scaleX(-1);" autoplay
                        id="localClientVideo"></video>
             </div>
         </div>
