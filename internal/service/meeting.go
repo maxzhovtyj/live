@@ -12,6 +12,12 @@ type MeetingService struct {
 	roomsMX sync.RWMutex
 }
 
+func NewMeetingService() Meeting {
+	return &MeetingService{
+		rooms: make(map[string]*Room),
+	}
+}
+
 func (m *MeetingService) GetRoom(id string) (*Room, error) {
 	m.roomsMX.RLock()
 	r, ok := m.rooms[id]
@@ -79,13 +85,16 @@ func (r *Room) Publish(uid int32, msg BroadcastMessage) {
 	}
 }
 
+type BroadcastMessage struct {
+	Message map[string]interface{}
+	RoomID  string
+}
+
 type MeetParticipant struct {
-	ID int32
-
-	conn   *websocket.Conn
-	connMX sync.RWMutex
-
+	ID       int32
 	Messages chan BroadcastMessage
+
+	conn *websocket.Conn
 }
 
 func (mp *MeetParticipant) Write(v any) error {
@@ -94,15 +103,4 @@ func (mp *MeetParticipant) Write(v any) error {
 
 func (mp *MeetParticipant) ReadJSON(v any) error {
 	return mp.conn.ReadJSON(v)
-}
-
-type BroadcastMessage struct {
-	Message map[string]interface{}
-	RoomID  string
-}
-
-func NewMeetingService() Meeting {
-	return &MeetingService{
-		rooms: make(map[string]*Room),
-	}
 }

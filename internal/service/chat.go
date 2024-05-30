@@ -31,45 +31,11 @@ func (c *ChatService) GetUserConversations(id int32) ([]db.GetUserConversationsR
 func (c *ChatService) NewMessage(cid, uid int32, msg string) error {
 	return c.repo.Chat.InsertMessageIntoConversation(cid, uid, msg)
 }
-
-type Message struct {
-	FirstName string
-	LastName  string
-	String    string
-	Time      time.Time
-}
-
-type ChatRoom struct {
-	ConversationID int32
-
-	connections   map[int32]*Connection
-	connectionsMX sync.RWMutex
-
-	Upgrader *websocket.Upgrader
-}
-
-func (cr *ChatRoom) Publish(m Message) error {
-	cr.connectionsMX.RLock()
-	cr.connectionsMX.RUnlock()
-
-	for _, conn := range cr.connections {
-		conn.Messages <- m
-	}
-
-	return nil
-}
-
 func NewChatService(repo *storage.Storage) *ChatService {
 	return &ChatService{
 		chatRooms: make(map[int32]*ChatRoom),
 		repo:      repo,
 	}
-}
-
-type Connection struct {
-	User     db.User
-	Messages chan Message
-	Conn     *websocket.Conn
 }
 
 func (c *ChatService) Join(cid int, cn *websocket.Conn, user db.User) (*Connection, *ChatRoom) {
@@ -104,6 +70,41 @@ func (c *ChatService) GetRoom(cid int32) *ChatRoom {
 	return cr
 }
 
+func (c *ChatService) GetRoomMessages(cid int) ([]db.GetConversationMessagesRow, error) {
+	return c.repo.GetConversationMessages(int32(cid))
+}
+
+type Connection struct {
+	User     db.User
+	Messages chan Message
+	Conn     *websocket.Conn
+}
+
+type Message struct {
+	FirstName string
+	LastName  string
+	String    string
+	Time      time.Time
+}
+
+type ChatRoom struct {
+	ConversationID int32
+
+	connections   map[int32]*Connection
+	connectionsMX sync.RWMutex
+}
+
+func (cr *ChatRoom) Publish(m Message) error {
+	cr.connectionsMX.RLock()
+	cr.connectionsMX.RUnlock()
+
+	for _, conn := range cr.connections {
+		conn.Messages <- m
+	}
+
+	return nil
+}
+
 func (cr *ChatRoom) Join(id int32, c *websocket.Conn, user db.User) *Connection {
 	cr.connectionsMX.Lock()
 	cn := &Connection{
@@ -129,8 +130,4 @@ func (cr *ChatRoom) Leave(id int32) {
 	close(c.Messages)
 
 	delete(cr.connections, id)
-}
-
-func (c *ChatService) GetRoomMessages(cid int) ([]db.GetConversationMessagesRow, error) {
-	return c.repo.GetConversationMessages(int32(cid))
 }
