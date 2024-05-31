@@ -188,7 +188,7 @@ func (q *Queries) GetConversationMessages(ctx context.Context, conversationID in
 const getConversationParticipants = `-- name: GetConversationParticipants :many
 SELECT u.id, u.first_name, u.last_name
 FROM conversation_participants cp
-LEFT JOIN users u ON cp.user_id = u.id
+         LEFT JOIN users u ON cp.user_id = u.id
 WHERE cp.conversation_id = $1
 `
 

@@ -10,10 +10,10 @@ import (
 templ VideoRoom(c models.Context) {
 @layout.Main(c) {
 <div>
-    <div class="bg-gray-100 flex justify-center items-center min-h-screen">
-        <div id="video-container" class="flex flex-wrap justify-center mt-10">
-            <div class="p-4 max-w-lg transition ease-in-out delay-150">
-                <video playsinline muted class="flex rounded-lg h-full w-full" style="transform: scaleX(-1);" autoplay
+    <div class="bg-gray-100 flex justify-center items-center h-full">
+        <div id="video-container" class="p-4 flex flex-wrap justify-center gap-2">
+            <div class="p-2 max-w-lg">
+                <video playsinline muted class="flex rounded-lg w-full" style="transform: scaleX(-1);" autoplay
                        id="localClientVideo"></video>
             </div>
         </div>
