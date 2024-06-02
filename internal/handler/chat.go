@@ -11,6 +11,7 @@ import (
 	"github.com/maxzhovtyj/live/internal/pkg/templates/components"
 	"github.com/maxzhovtyj/live/internal/service"
 	"log"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -48,6 +49,7 @@ var upgrader websocket.Upgrader
 func (h *Handler) JoinChat(ctx echo.Context) error {
 	cid, err := strconv.Atoi(ctx.QueryParam("id"))
 	if err != nil {
+		ctx.Response().WriteHeader(http.StatusBadRequest)
 		return err
 	}
 
@@ -60,23 +62,21 @@ func (h *Handler) JoinChat(ctx echo.Context) error {
 	defer room.Leave(chatConn.User.ID)
 
 	messages, err := h.s.Chat.GetRoomMessages(cid)
-	if err != nil {
-		return err
-	}
+	if len(messages) > 0 && err == nil {
+		messagesBuffer := bytes.NewBuffer(nil)
 
-	messagesBuffer := bytes.NewBuffer(nil)
+		for _, m := range messages {
+			msg := components.Message(m.Concat.(string), m.CreatedAt.Time.Format(time.Kitchen), m.Body)
+			err = msg.Render(context.Background(), messagesBuffer)
+			if err != nil {
+				return err
+			}
+		}
 
-	for _, m := range messages {
-		msg := components.Message(m.Concat.(string), m.CreatedAt.Time.Format(time.Kitchen), m.Body)
-		err = msg.Render(context.Background(), messagesBuffer)
+		err = conn.WriteMessage(websocket.TextMessage, messagesBuffer.Bytes())
 		if err != nil {
 			return err
 		}
-	}
-
-	err = conn.WriteMessage(websocket.TextMessage, messagesBuffer.Bytes())
-	if err != nil {
-		return err
 	}
 
 	closeCh := make(chan struct{})

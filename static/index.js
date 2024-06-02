@@ -88,7 +88,7 @@ const openCamera = async () => {
         try {
             return await navigator.mediaDevices.getUserMedia(constraints);
         } catch (error) {
-            console.log(error);
+            alert(error);
         }
     }
 };
@@ -126,16 +126,16 @@ async function InitiateMeeting() {
         const message = JSON.parse(e.data);
 
         if (message.join) {
-            console.log('Someone just joined the call', message);
+            console.log('someone just joined the call', message);
             callUser();
         }
 
         if (message.iceCandidate) {
-            console.log('recieving and adding ICE candidate');
+            console.log('receiving and adding ICE candidate');
             try {
                 await peerRef.addIceCandidate(message.iceCandidate);
             } catch (error) {
-                console.log(error);
+                alert(error);
             }
         }
 
@@ -150,7 +150,7 @@ async function InitiateMeeting() {
 }
 
 const handleOffer = async (offer, socket) => {
-    console.log('recieved an offer, creating an answer');
+    console.log('received an offer, creating an answer');
 
     peerRef = createPeer();
 
@@ -167,6 +167,8 @@ const handleOffer = async (offer, socket) => {
 };
 
 const handleAnswer = (answer) => {
+    console.log('received an answer, creating RTC session');
+
     peerRef.setRemoteDescription(new RTCSessionDescription(answer));
 };
 
@@ -181,6 +183,7 @@ const callUser = () => {
 
 const createPeer = () => {
     console.log('creating peer connection');
+
     const peer = new RTCPeerConnection({
         iceServers: [{urls: 'stun:stun.l.google.com:19302'}],
     });
@@ -200,7 +203,7 @@ const handleNegotiationNeeded = async () => {
         await peerRef.setLocalDescription(myOffer);
         webSocket.send(JSON.stringify({offer: peerRef.localDescription}));
     } catch (error) {
-        console.log(error);
+        alert(error);
     }
 };
 
