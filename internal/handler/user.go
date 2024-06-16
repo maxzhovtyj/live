@@ -6,7 +6,6 @@ import (
 	"github.com/maxzhovtyj/live/internal/models"
 	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
 	"github.com/maxzhovtyj/live/internal/pkg/templates"
-	"log"
 	"net/http"
 	"time"
 )
@@ -21,25 +20,11 @@ func (h *Handler) SignIn(ctx echo.Context) error {
 	email := ctx.FormValue("email")
 	password := ctx.FormValue("password")
 
-	token, err := h.s.User.GenerateTokens(email, password)
-	if err != nil {
-		err = ctx.String(http.StatusBadRequest, err.Error())
-		if err != nil {
-			return err
-		}
-
-		return nil
+	if email == "" || password == "" {
+		return ctx.String(http.StatusBadRequest, "Введено некоректні дані")
 	}
 
-	ctx.SetCookie(&http.Cookie{
-		Name:  accessTokenCookie,
-		Value: token,
-		Path:  "/",
-	})
-
-	ctx.Response().Header().Set("HX-Redirect", "/")
-
-	return nil
+	return h.login(ctx, email, password)
 }
 
 func (h *Handler) SignOut(ctx echo.Context) error {
@@ -67,7 +52,6 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 	repeatPassword := ctx.FormValue("repeat-password")
 
 	if password != repeatPassword {
-		log.Println(password, repeatPassword)
 		err := ctx.String(http.StatusBadRequest, "паролі не співпадають")
 		if err != nil {
 			return err
@@ -84,10 +68,18 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 		return err
 	}
 
+	return h.login(ctx, email, password)
+}
+
+func (h *Handler) login(ctx echo.Context, email, password string) error {
 	token, err := h.s.User.GenerateTokens(email, password)
 	if err != nil {
-		log.Println(err)
-		return err
+		err = ctx.String(http.StatusBadRequest, err.Error())
+		if err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	ctx.SetCookie(&http.Cookie{

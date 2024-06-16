@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
+	db "github.com/maxzhovtyj/live/internal/pkg/db/sqlc"
 	"github.com/maxzhovtyj/live/internal/pkg/templates"
 	"github.com/maxzhovtyj/live/internal/pkg/templates/components"
 	"github.com/maxzhovtyj/live/internal/service"
@@ -15,6 +16,43 @@ import (
 	"strconv"
 	"time"
 )
+
+func (h *Handler) newChatModal(ctx echo.Context) error {
+	users, err := h.s.User.GetAll()
+	if err != nil {
+		return err
+	}
+
+	curr := getContext(ctx).User
+	var other []db.User
+
+	for _, u := range users {
+		if u.ID != curr.ID {
+			other = append(other, u)
+		}
+	}
+
+	return components.NewConversation(other).Render(context.Background(), ctx.Response().Writer)
+}
+
+func (h *Handler) newChat(ctx echo.Context) error {
+	name := ctx.FormValue("name")
+	user, err := strconv.Atoi(ctx.FormValue("user"))
+	if err != nil {
+		return err
+	}
+
+	u := getContext(ctx).User
+
+	err = h.s.Chat.NewChat(name, []int32{int32(user), u.ID}...)
+	if err != nil {
+		return err
+	}
+
+	ctx.Response().Header().Set("HX-Redirect", "/chat")
+
+	return nil
+}
 
 func (h *Handler) Index(ctx echo.Context) error {
 	return templates.Chat(getContext(ctx), -1).Render(context.Background(), ctx.Response().Writer)
