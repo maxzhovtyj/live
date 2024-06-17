@@ -3,7 +3,9 @@ let localClientStream;
 let webSocket;
 let localClientVideo;
 let videoContainer;
-let peerRef;
+let peerRefs = {};
+
+let myUID;
 
 const muteAudioButton = document.getElementById('mute-microphone-btn');
 const muteVideoButton = document.getElementById('turn-off-camera-btn');
@@ -116,43 +118,51 @@ async function InitiateMeeting() {
 
     webSocket = socket;
 
-    let uid = document.getElementById("current-user-id").value
+    myUID = document.getElementById("current-user-id").value
 
     socket.addEventListener('open', () => {
-        socket.send(JSON.stringify({join: true, uid: uid}));
+        socket.send(JSON.stringify({join: true, from: myUID}));
     });
 
     socket.addEventListener('message', async (e) => {
         const message = JSON.parse(e.data);
 
+        console.log(message)
+
+        let fromUserID = message.from;
+
         if (message.join) {
             console.log('someone just joined the call', message);
-            callUser();
+            callUser(fromUserID);
+        }
+
+        if (message.to && message.to !== myUID) {
+            return
         }
 
         if (message.iceCandidate) {
             console.log('receiving and adding ICE candidate');
             try {
-                await peerRef.addIceCandidate(message.iceCandidate);
+                await peerRefs[fromUserID].addIceCandidate(message.iceCandidate);
             } catch (error) {
-                alert(error);
+                return
             }
         }
 
         if (message.offer) {
-            await handleOffer(message.offer, socket);
+            await handleOffer(message.offer, socket, fromUserID);
         }
 
         if (message.answer) {
-            handleAnswer(message.answer);
+            handleAnswer(message.answer, fromUserID);
         }
     });
 }
 
-const handleOffer = async (offer, socket) => {
+const handleOffer = async (offer, socket, remoteUID) => {
     console.log('received an offer, creating an answer');
 
-    peerRef = createPeer();
+    let peerRef = createPeer(remoteUID);
 
     await peerRef.setRemoteDescription(new RTCSessionDescription(offer));
 
@@ -163,61 +173,70 @@ const handleOffer = async (offer, socket) => {
     const answer = await peerRef.createAnswer();
     await peerRef.setLocalDescription(answer);
 
-    socket.send(JSON.stringify({answer: peerRef.localDescription}));
+    socket.send(JSON.stringify({answer: peerRef.localDescription, from: myUID, to: remoteUID}));
+
+    peerRefs[remoteUID] = peerRef
 };
 
-const handleAnswer = (answer) => {
+const handleAnswer = (answer, fromUID) => {
     console.log('received an answer, creating RTC session');
 
-    peerRef.setRemoteDescription(new RTCSessionDescription(answer));
+    peerRefs[fromUID].setRemoteDescription(new RTCSessionDescription(answer));
 };
 
-const callUser = () => {
+const callUser = (remoteUID) => {
     console.log('calling other remote user');
-    peerRef = createPeer();
+    let peerRef = createPeer(remoteUID);
 
     localClientStream.getTracks().forEach((track) => {
         peerRef.addTrack(track, localClientStream);
     });
+
+    peerRefs[remoteUID] = peerRef
 };
 
-const createPeer = () => {
+const createPeer = (remoteUID) => {
     console.log('creating peer connection');
 
     const peer = new RTCPeerConnection({
         iceServers: [{urls: 'stun:stun.l.google.com:19302'}],
     });
 
-    peer.onnegotiationneeded = handleNegotiationNeeded;
-    peer.onicecandidate = handleIceCandidate;
-    peer.ontrack = handleTrackEvent;
+    peer.onnegotiationneeded = () => handleNegotiationNeeded(remoteUID);
+    peer.onicecandidate = (e) => handleIceCandidate(e, remoteUID);
+    peer.ontrack = (e) => handleTrackEvent(e, remoteUID);
 
     return peer;
 };
 
-const handleNegotiationNeeded = async () => {
+const handleNegotiationNeeded = async (remoteUID) => {
     console.log('creating offer');
 
     try {
-        const myOffer = await peerRef.createOffer();
-        await peerRef.setLocalDescription(myOffer);
-        webSocket.send(JSON.stringify({offer: peerRef.localDescription}));
+        const myOffer = await peerRefs[remoteUID].createOffer();
+        await peerRefs[remoteUID].setLocalDescription(myOffer);
+        webSocket.send(JSON.stringify({offer: peerRefs[remoteUID].localDescription, from: myUID, to: remoteUID}));
     } catch (error) {
         alert(error);
     }
 };
 
-const handleIceCandidate = (e) => {
+const handleIceCandidate = (e, remoteUID) => {
     console.log('found ice candidate');
     if (e.candidate) {
-        webSocket.send(JSON.stringify({iceCandidate: e.candidate}));
+        webSocket.send(JSON.stringify({iceCandidate: e.candidate, to: remoteUID, from: myUID}));
     }
 };
 
-const handleTrackEvent = (e) => {
+const handleTrackEvent = (e, remoteUID) => {
     console.log('received tracks');
 
-    let videoElement = document.getElementById(`remoteClientVideo`)
+    if (!remoteUID) {
+        console.log("tracks, remoteUID", remoteUID)
+        return
+    }
+
+    let videoElement = document.getElementById(`remoteClientVideo-${remoteUID}`)
 
     if (!videoElement) {
         const newDiv = document.createElement('div');
@@ -225,10 +244,10 @@ const handleTrackEvent = (e) => {
 
         videoElement = document.createElement('video');
         videoElement.playsInline = true;
-        videoElement.className = 'flex rounded-lg w-full';
+        videoElement.className = 'flex rounded-lg w-full h-full';
         videoElement.style.transform = 'scaleX(-1)';
         videoElement.autoplay = true;
-        videoElement.id = `remoteClientVideo`
+        videoElement.id = `remoteClientVideo-${remoteUID}`
 
         newDiv.appendChild(videoElement);
 
